@@ -1,0 +1,21 @@
+﻿@model ITKT_PROJEKTAS.Models.LoginDto
+
+@{
+    ViewBag.Title = "Prisijungimas";
+}
+<form method="POST">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label asp-for="Username">Username</label>
+                <input type="text" class="form-control" asp-for="Username" placeholder="Username" />
+            </div>
+            <div class="form-group">
+                <label asp-for="Password">Password</label>
+                <input class="form-control" asp-for="Password" placeholder="Password" type="password" />
+            </div>
+            <button class="btn btn-primary" type="submit">Login</button>
+            <a asp-area="" asp-controller="Account" asp-action="Register">Signup</a>
+        </div>
+    </div>
+</form>
