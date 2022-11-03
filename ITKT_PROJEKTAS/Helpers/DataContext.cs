@@ -16,7 +16,7 @@ public class DataContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {
-        options.UseMySql(connectionString: @"server=localhost;database=ktprojektasdb;uid=root;password=;",
-                new MySqlServerVersion(new Version(10, 4, 25)));
+        options.UseMySql(connectionString: @"server=localhost;database=zaza;uid=root;password=;",
+            ServerVersion.AutoDetect(@"server=localhost;database=zaza;uid=root;password=;"));
     }
 }

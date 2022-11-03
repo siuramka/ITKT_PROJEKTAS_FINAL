@@ -41,6 +41,14 @@ namespace ITKT_PROJEKTAS.Controllers
 
             await _userManager.SignIn(this.HttpContext, user, false);
 
+            if(User.IsInRole(Role.Manager.ToString()))
+            {
+                return LocalRedirect("~/Manager");
+            }
+            if (User.IsInRole(Role.Admin.ToString()))
+            {
+                return LocalRedirect("~/Admin");
+            }
             return LocalRedirect("~/Account/Profile");
         }
 
@@ -59,7 +67,7 @@ namespace ITKT_PROJEKTAS.Controllers
 
             await _userManager.SignIn(this.HttpContext, user, false);
 
-            return LocalRedirect("~/Home/Index");
+            return LocalRedirect("~/Account/Profile");
         }
 
         public async Task<IActionResult> LogoutAsync()

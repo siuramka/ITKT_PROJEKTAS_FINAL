@@ -15,66 +15,10 @@ namespace ITKT_PROJEKTAS.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index()
-        {
-            return View();
-        }
         public IActionResult Privacy()
         {
             return View();
         }
-        public ActionResult Register()
-        {
-            return View();
-        }
-        public ActionResult Login()
-        {
-            return View();
-        }
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public ActionResult Login(AuthenticateRequest model)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        try
-        //        {
-        //            AuthenticateResponse resp = _userService.Authenticate(model);
-        //            return RedirectToAction("Index");
-        //        }
-        //        catch
-        //        {
-        //            ViewBag.error = "Login failed";
-        //            return RedirectToAction("Login");
-        //        }
-
-
-        //    }
-        //    return View();
-        //}
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public ActionResult Register(RegisterDto _user)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        try
-        //        {
-        //            _userService.Register(_user);
-        //            return RedirectToAction("Index");
-        //        }
-        //        catch(Exception ex)
-        //        {
-        //            ViewBag.error = ex.Message;
-        //            return View();
-        //        }
-        //    }
-        //    var errors = ModelState.Values.SelectMany(v => v.Errors);
-        //    return View();
-
-
-        //}
-
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
