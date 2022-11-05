@@ -1,6 +1,7 @@
 ﻿using ITKT_PROJEKTAS.Entities;
 using ITKT_PROJEKTAS.Models;
 using ITKT_PROJEKTAS.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -15,10 +16,11 @@ namespace ITKT_PROJEKTAS.Controllers
             _logger = logger;
         }
 
-        public IActionResult Privacy()
+        public IActionResult Index()
         {
             return View();
         }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

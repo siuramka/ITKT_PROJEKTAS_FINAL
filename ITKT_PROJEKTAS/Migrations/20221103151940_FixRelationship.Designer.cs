@@ -3,6 +3,7 @@ using System;
 using ITKT_PROJEKTAS.Helpers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ITKT_PROJEKTAS.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20221103151940_FixRelationship")]
+    partial class FixRelationship
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -59,17 +61,11 @@ namespace ITKT_PROJEKTAS.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime(6)");
-
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<int>("Difficulity")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Length")
                         .HasColumnType("int");
 
                     b.Property<int>("MaxPeople")
@@ -81,6 +77,9 @@ namespace ITKT_PROJEKTAS.Migrations
 
                     b.Property<int>("PricePerPerson")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("TimeLength")
+                        .HasColumnType("datetime(6)");
 
                     b.HasKey("Id");
 
@@ -142,7 +141,8 @@ namespace ITKT_PROJEKTAS.Migrations
 
             modelBuilder.Entity("ITKT_PROJEKTAS.Entities.Route", b =>
                 {
-                    b.Navigation("Reservation");
+                    b.Navigation("Reservation")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("ITKT_PROJEKTAS.Entities.User", b =>

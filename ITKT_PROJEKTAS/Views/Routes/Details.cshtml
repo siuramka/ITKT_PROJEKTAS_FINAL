@@ -1,0 +1,70 @@
+﻿@using ITKT_PROJEKTAS.Entities
+@model ITKT_PROJEKTAS.Entities.RouteOrderDTO
+
+@{
+    ViewData["Title"] = "Maršrutas";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Maršrutų sarašas</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Date)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Date)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Length)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Length)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Difficulity)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Difficulity)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.PricePerPerson)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.PricePerPerson)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.MaxPeople)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.MaxPeople)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.PeopleCount)
+        </dt>
+        <dd class="col-sm-2">
+            @Html.DropDownListFor(m => m.PeopleCount,
+            new SelectList(Enumerable.Range(1, @Model.MaxPeople)),
+            "Pasirinkti dalyvių skaičių")
+        </dd>
+
+    </dl>
+</div>
+<div>
+    <a asp-action="Index" asp-route-id="@Model?.Id">Užsisakyti</a> |
+    <a asp-action="Index">Grįžti į sarašą</a>
+</div>

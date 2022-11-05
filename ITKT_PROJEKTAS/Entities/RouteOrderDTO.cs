@@ -1,9 +1,6 @@
-﻿using Microsoft.AspNetCore.Components.Server;
-using System.Text.Json.Serialization;
-
-namespace ITKT_PROJEKTAS.Entities
+﻿namespace ITKT_PROJEKTAS.Entities
 {
-    public class Route
+    public class RouteOrderDTO
     {
         public int Id { get; set; }
         public string Name { get; set; }
@@ -12,7 +9,8 @@ namespace ITKT_PROJEKTAS.Entities
         public Difficulity Difficulity { get; set; }
         public string Description { get; set; }
         public int PricePerPerson { get; set; }
+        public int PeopleCount { get; set; }
         public int MaxPeople { get; set; }
-        public Reservation? Reservation { get; set; }
+
     }
 }
