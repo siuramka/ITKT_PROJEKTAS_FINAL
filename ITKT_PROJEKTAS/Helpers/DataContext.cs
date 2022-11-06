@@ -25,4 +25,6 @@ public class DataContext : DbContext
     public DbSet<ITKT_PROJEKTAS.Entities.Route> Route { get; set; }
 
     public DbSet<ITKT_PROJEKTAS.Entities.Reservation> Reservation { get; set; }
+
+    public DbSet<ITKT_PROJEKTAS.Entities.RouteOrderDTO> RouteOrderDTO { get; set; }
 }

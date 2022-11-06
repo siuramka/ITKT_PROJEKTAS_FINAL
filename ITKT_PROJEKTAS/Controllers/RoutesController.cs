@@ -27,8 +27,12 @@ namespace ITKT_PROJEKTAS.Controllers
         {
             ViewBag.DiffSortParm = sortOrder == "Difficulity" ? "difficulityDesc" : "Difficulity";
             ViewBag.LengthSortParm = sortOrder == "Length" ? "lengthDesc" : "Length";
-            var routes = from s in _context.Route
-                         select s;
+            var resevations = _context.Reservation.Include(r => r.Route).Select(r => r.RouteId).ToList();
+            //var customers = context.Customers.WhereBulkNotContains(deserializedCustomers);
+            //var customerIds = deserializedCustomers.Select(x => x.CustomerID).ToList();
+            //var customers = context.Customers.Where(x => !customerIds.Contains(x.CustomerID)).ToList();
+            //var routes = _context.Route.Where(x => !_context.Reservation.Include(r => r.Route).Any(x2 => x2.Route.Id == x.Id));
+            var routes = _context.Route.Where(x => !resevations.Contains(x.Id)).Select(x => x);
             switch (sortOrder)
             {
                 case "Difficulity":
@@ -46,7 +50,7 @@ namespace ITKT_PROJEKTAS.Controllers
                 default:
                     break;
             }
-            return View(await _context.Route.ToListAsync());
+            return View(routes);
         }
 
         // GET: Routes/Details/5
@@ -65,6 +69,7 @@ namespace ITKT_PROJEKTAS.Controllers
             {
                 return NotFound();
             }
+            //:D
             RouteOrderDTO routeOrderDTO = new RouteOrderDTO();
             routeOrderDTO.Name = route.Name;
             routeOrderDTO.Description = route.Description;
@@ -189,22 +194,15 @@ namespace ITKT_PROJEKTAS.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-        [HttpPost, ActionName("Order")]
+        [HttpPost, ActionName("PassOrder")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> PassOrder(int id)
+        public async Task<IActionResult> PassOrder(RouteOrderDTO order)
         {
-            if (_context.Route == null)
+            if (!ModelState.IsValid)
             {
-                return Problem("Entity set 'DataContext.Route'  is null.");
+                return Problem("Klaida");
             }
-            var route = await _context.Route.FindAsync(id);
-            if (route != null)
-            {
-                await _context.SaveChangesAsync();
-                return RedirectToAction();
-            }
-
-            return RedirectToAction();
+            return RedirectToAction("Create", "Reservations", order);
         }
 
         private bool RouteExists(int id)

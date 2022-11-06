@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ITKT_PROJEKTAS.Entities;
 using ITKT_PROJEKTAS.Helpers;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ITKT_PROJEKTAS.Controllers
 {
@@ -20,9 +22,11 @@ namespace ITKT_PROJEKTAS.Controllers
         }
 
         // GET: Reservations
+        [Authorize]
         public async Task<IActionResult> Index()
         {
-            var dataContext = _context.Reservation.Include(r => r.Route).Include(r => r.User);
+            var userId = ((ClaimsIdentity)User.Identity).FindFirst(ClaimTypes.NameIdentifier).Value;
+            var dataContext = _context.Reservation.Include(r => r.Route).Include(r => r.User).Where(r => r.UserId == int.Parse(userId));
             return View(await dataContext.ToListAsync());
         }
 
@@ -45,32 +49,42 @@ namespace ITKT_PROJEKTAS.Controllers
 
             return View(reservation);
         }
-
-        // GET: Reservations/Create
-        public IActionResult Create()
+        [Authorize]
+        public IActionResult Create(RouteOrderDTO order)
         {
-            ViewData["RouteId"] = new SelectList(_context.Route, "Id", "Id");
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id");
+            var reservation = new Reservation();// ??
+            var route = _context.Route.Where(s => s.Id == order.Id).FirstOrDefault();
+            var userId = ((ClaimsIdentity)User.Identity).FindFirst(ClaimTypes.NameIdentifier).Value;
+            var user = _context.Users.Where(u => u.Id == int.Parse(userId)).FirstOrDefault();
+            reservation.Boat = order.Boat;
+            reservation.Discount = 999;
+            reservation.PersonCount = order.PeopleCount;
+            reservation.Price = 999;
+            reservation.Route = route;
+            reservation.User = user;
+            _context.Reservation.Add(reservation);
+            _context.SaveChanges();
             return View();
         }
 
-        // POST: Reservations/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,RouteId,Boat,Price,Discount,PersonCount,UserId")] Reservation reservation)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Add(reservation);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["RouteId"] = new SelectList(_context.Route, "Id", "Id", reservation.RouteId);
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", reservation.UserId);
-            return View(reservation);
-        }
+        //// POST: Reservations/Create
+        //// To protect from overposting attacks, enable the specific properties you want to bind to.
+        //// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> Create(RouteOrderDTO order)
+        //{
+        //    return View();
+        //    //if (ModelState.IsValid)
+        //    //{
+        //    //    _context.Add(reservation);
+        //    //    await _context.SaveChangesAsync();
+        //    //    return RedirectToAction(nameof(Index));
+        //    //}
+        //    //ViewData["RouteId"] = new SelectList(_context.Route, "Id", "Id", reservation.RouteId);
+        //    //ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", reservation.UserId);
+        //    //return View(reservation);
+        //}
 
         // GET: Reservations/Edit/5
         public async Task<IActionResult> Edit(int? id)

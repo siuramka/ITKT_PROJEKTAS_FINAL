@@ -70,6 +70,7 @@ namespace ITKT_PROJEKTAS.Controllers
             return LocalRedirect("~/Account/Profile");
         }
 
+        [Authorize]
         public async Task<IActionResult> LogoutAsync()
         {
             await _userManager.SignOut(this.HttpContext);
