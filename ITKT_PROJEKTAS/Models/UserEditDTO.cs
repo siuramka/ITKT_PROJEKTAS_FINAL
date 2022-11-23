@@ -8,7 +8,7 @@ namespace ITKT_PROJEKTAS.Models
     public class UserEditDTO
     {
         [JsonIgnore]
-        public string Id { get; set; }
+        public int Id { get; set; }
         [Required]
         [DisplayName("Vardas")]
         public string FirstName { get; set; }

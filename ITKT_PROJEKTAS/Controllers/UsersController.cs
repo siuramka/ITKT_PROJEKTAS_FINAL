@@ -90,7 +90,7 @@ namespace ITKT_PROJEKTAS.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,LastName,Username,Phone,Role,PasswordHash")] User user)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,LastName,Username,Phone,Role")] UserEditDTO user)
         {
             if (id != user.Id)
             {
@@ -101,7 +101,15 @@ namespace ITKT_PROJEKTAS.Controllers
             {
                 try
                 {
-                    _context.Update(user);
+                    var user1 = await _context.Users.FindAsync(id);
+                    bool usernamenameExists = _context.Users.Any(x => x.Id != user.Id && x.Username.ToLower() == user.Username.ToLower());
+                    if(usernamenameExists)
+                    {
+                        ViewBag.Erroras = "Vartotojo vardas jau uzimtas";
+                        return View(user);
+                    }
+                    User usr = _mapper.Map(user, user1);
+                    _context.Update(usr);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -135,7 +143,7 @@ namespace ITKT_PROJEKTAS.Controllers
                 return NotFound();
             }
 
-            return View(user);
+            return View(_mapper.Map<UserEditDTO>(user));
         }
 
         // POST: Users/Delete/5

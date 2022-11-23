@@ -1,4 +1,5 @@
-﻿@model ITKT_PROJEKTAS.Models.UserEditDTO
+﻿@using ITKT_PROJEKTAS.Entities;
+@model ITKT_PROJEKTAS.Models.UserEditDTO
 
 @{
     ViewData["Title"] = "Edit";
@@ -41,6 +42,7 @@
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
+            @ViewBag.Erroras
         </form>
     </div>
 </div>

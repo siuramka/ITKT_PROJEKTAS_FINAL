@@ -43,7 +43,7 @@ builder.Services.Configure<CookiePolicyOptions>(options =>
     options.MinimumSameSitePolicy = SameSiteMode.None;
 });
 
-
+//Sutvarkyt kad tik savo galetum atsidaryt ruote tt..
 
 var app = builder.Build();
 

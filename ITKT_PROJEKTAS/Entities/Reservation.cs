@@ -16,7 +16,7 @@ namespace ITKT_PROJEKTAS.Entities
         public double Discount { get; set; }
         [DisplayName("Dalyviu skaičius")]
         public int PersonCount { get; set; }
-        [DisplayName("Vartotojo Id")]
+        [DisplayName("Uzsakovo Id")]
         public int UserId { get; set; }
         public User? User { get; set; }
     }

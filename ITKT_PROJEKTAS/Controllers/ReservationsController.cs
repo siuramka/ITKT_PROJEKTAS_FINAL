@@ -30,8 +30,14 @@ namespace ITKT_PROJEKTAS.Controllers
             var dataContext = _context.Reservation.Include(r => r.Route).Include(r => r.User).Where(r => r.UserId == int.Parse(userId));
             return View(await dataContext.ToListAsync());
         }
+        [Authorize]
+        public async Task<IActionResult> IndexAdmin()
+        {
+            return View(_context.Reservation.Include(r => r.Route).Include(r => r.User));
+        }
 
         // GET: Reservations/Details/5
+        [Authorize]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null || _context.Reservation == null)

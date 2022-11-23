@@ -9,6 +9,7 @@ namespace ITKT_PROJEKTAS.Helpers
         public MappingProfile()
         {
             CreateMap<User, UserEditDTO>();
+            CreateMap<UserEditDTO, User>();
 
         }
     }

@@ -9,6 +9,7 @@ using ITKT_PROJEKTAS.Helpers;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Authorization;
 using ITKT_PROJEKTAS.Models;
+using ITKT_PROJEKTAS.Entities;
 
 namespace ITKT_PROJEKTAS.Controllers
 {
@@ -33,6 +34,36 @@ namespace ITKT_PROJEKTAS.Controllers
             //var customers = context.Customers.Where(x => !customerIds.Contains(x.CustomerID)).ToList();
             //var routes = _context.Route.Where(x => !_context.Reservation.Include(r => r.Route).Any(x2 => x2.Route.Id == x.Id));
             var routes = _context.Route.Where(x => !resevations.Contains(x.Id)).Select(x => x);
+            switch (sortOrder)
+            {
+                case "Difficulity":
+                    routes = routes.OrderBy(s => s.Difficulity);
+                    break;
+                case "DifficulityDesc":
+                    routes = routes.OrderByDescending(s => s.Difficulity);
+                    break;
+                case "Length":
+                    routes = routes.OrderBy(s => s.Length);
+                    break;
+                case "LengthDesc":
+                    routes = routes.OrderByDescending(s => s.Length);
+                    break;
+                default:
+                    break;
+            }
+            return View(routes);
+        }
+        [Authorize]
+        public async Task<IActionResult> IndexAdmin(string sortOrder)
+        {
+            ViewBag.DiffSortParm = sortOrder == "Difficulity" ? "difficulityDesc" : "Difficulity";
+            ViewBag.LengthSortParm = sortOrder == "Length" ? "lengthDesc" : "Length";
+            var resevations = _context.Reservation.Include(r => r.Route).Select(r => r.RouteId).ToList();
+            //var customers = context.Customers.WhereBulkNotContains(deserializedCustomers);
+            //var customerIds = deserializedCustomers.Select(x => x.CustomerID).ToList();
+            //var customers = context.Customers.Where(x => !customerIds.Contains(x.CustomerID)).ToList();
+            //var routes = _context.Route.Where(x => !_context.Reservation.Include(r => r.Route).Any(x2 => x2.Route.Id == x.Id));
+            var routes = _context.Route.Select(x => x);
             switch (sortOrder)
             {
                 case "Difficulity":
@@ -81,6 +112,24 @@ namespace ITKT_PROJEKTAS.Controllers
             routeOrderDTO.PeopleCount = 0;
             routeOrderDTO.Passingid = route.Id;
             return View(routeOrderDTO);
+        }
+        // GET: Routes/DetailsUser/5
+        [Authorize]
+        public async Task<IActionResult> DetailsUser(int? id)
+        {
+
+            if (id == null || _context.Route == null)
+            {
+                return NotFound();
+            }
+
+            var route = await _context.Route
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (route == null)
+            {
+                return NotFound();
+            }
+            return View(route);
         }
 
         // GET: Routes/Create
@@ -139,7 +188,48 @@ namespace ITKT_PROJEKTAS.Controllers
             {
                 try
                 {
-                    _context.Update(route);
+                    _context.Update(route); // Paupdatinu ruote,
+                    // Recalculatinu discounta
+                    Reservation reservation = _context.Reservation.Include(r => r.Route).Include(u => u.User).Where(x => x.RouteId == id).FirstOrDefault();
+                    if(!(reservation == null))
+                    {
+                        User useris = _context.Reservation.Include(r => r.Route).Include(u => u.User).Where(x => x.RouteId == id).Select(z => z.User).FirstOrDefault();
+                        var userReservations = _context.Reservation.Include(r => r.User).Where(r => r.UserId == useris.Id && r.RouteId != route.Id);//excludinu sita itema nes recalculatima
+                        var userReservationSum = userReservations.Sum(x => x.Price);
+                        //Skull emoji , this is awful why am I not doing this properly 
+                        double totalSum = reservation.PersonCount * route.PricePerPerson;
+                        if (totalSum >= 200 && totalSum < 250)
+                        {
+                            reservation.Discount = totalSum * 0.03;
+                        }
+                        else if (totalSum >= 250 && totalSum < 400)
+                        {
+                            reservation.Discount = totalSum * 0.05;
+                        }
+                        else if (totalSum >= 400)
+                        {
+                            reservation.Discount = totalSum * 0.10;
+                        }
+                        else
+                            reservation.Discount = 0;
+
+                        //Papildoma
+                        if (userReservationSum >= 1000 && userReservationSum < 2000)
+                        {
+                            reservation.Discount += totalSum * 0.03;
+                        }
+                        else if (userReservationSum >= 2000 && userReservationSum < 3000)
+                        {
+                            reservation.Discount += totalSum * 0.05;
+                        }
+                        else if (userReservationSum >= 3000)
+                        {
+                            reservation.Discount += totalSum * 0.10;
+                        }
+                        ViewBag.Update = "Perskaiciuota nuolaida suteiktai rezervacijai pagal atnaujintą maršrutą.";
+                        reservation.Price = totalSum - reservation.Discount;
+                        _context.Update(reservation);
+                    }
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -153,7 +243,7 @@ namespace ITKT_PROJEKTAS.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(IndexAdmin));
             }
             return View(route);
         }
