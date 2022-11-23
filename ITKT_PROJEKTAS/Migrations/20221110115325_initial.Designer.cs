@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ITKT_PROJEKTAS.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20221101115800_UpdateDb")]
-    partial class UpdateDb
+    [Migration("20221110115325_initial")]
+    partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -30,19 +30,25 @@ namespace ITKT_PROJEKTAS.Migrations
                     b.Property<int>("Boat")
                         .HasColumnType("int");
 
-                    b.Property<int>("Discount")
-                        .HasColumnType("int");
+                    b.Property<double>("Discount")
+                        .HasColumnType("double");
 
                     b.Property<int>("PersonCount")
                         .HasColumnType("int");
 
-                    b.Property<int>("Price")
+                    b.Property<double>("Price")
+                        .HasColumnType("double");
+
+                    b.Property<int>("RouteId")
                         .HasColumnType("int");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("RouteId")
+                        .IsUnique();
 
                     b.HasIndex("UserId");
 
@@ -55,12 +61,18 @@ namespace ITKT_PROJEKTAS.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime(6)");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<int>("Difficulity")
                         .HasColumnType("int");
+
+                    b.Property<double>("Length")
+                        .HasColumnType("double");
 
                     b.Property<int>("MaxPeople")
                         .HasColumnType("int");
@@ -69,19 +81,10 @@ namespace ITKT_PROJEKTAS.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<int>("PricePerPerson")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ReservationId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("TimeLength")
-                        .HasColumnType("datetime(6)");
+                    b.Property<double>("PricePerPerson")
+                        .HasColumnType("double");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ReservationId")
-                        .IsUnique();
 
                     b.ToTable("Route");
                 });
@@ -122,30 +125,26 @@ namespace ITKT_PROJEKTAS.Migrations
 
             modelBuilder.Entity("ITKT_PROJEKTAS.Entities.Reservation", b =>
                 {
+                    b.HasOne("ITKT_PROJEKTAS.Entities.Route", "Route")
+                        .WithOne("Reservation")
+                        .HasForeignKey("ITKT_PROJEKTAS.Entities.Reservation", "RouteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("ITKT_PROJEKTAS.Entities.User", "User")
                         .WithMany("Reservations")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("Route");
+
                     b.Navigation("User");
                 });
 
             modelBuilder.Entity("ITKT_PROJEKTAS.Entities.Route", b =>
                 {
-                    b.HasOne("ITKT_PROJEKTAS.Entities.Reservation", "Reservation")
-                        .WithOne("Route")
-                        .HasForeignKey("ITKT_PROJEKTAS.Entities.Route", "ReservationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Reservation");
-                });
-
-            modelBuilder.Entity("ITKT_PROJEKTAS.Entities.Reservation", b =>
-                {
-                    b.Navigation("Route")
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("ITKT_PROJEKTAS.Entities.User", b =>

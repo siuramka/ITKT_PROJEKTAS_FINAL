@@ -9,6 +9,7 @@ namespace ITKT_PROJEKTAS.Services
     {
         User Register(RegisterDto model);
         User Authenticate(LoginDto model);
+        IEnumerable<User> GetUsers();
     }
 
     public class UserRepository : IUserRepository
@@ -20,7 +21,10 @@ namespace ITKT_PROJEKTAS.Services
         {
             _db = db;
         }
-
+        public IEnumerable<User> GetUsers()
+        {
+            return _db.Users;
+        }
         public User? Authenticate(LoginDto model)
         {
             var user = _db.Users.SingleOrDefault(x => x.Username == model.Username);

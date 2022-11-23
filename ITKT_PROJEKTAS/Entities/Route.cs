@@ -12,13 +12,13 @@ namespace ITKT_PROJEKTAS.Entities
         [DisplayName("Data")]
         public DateTime Date { get; set; }
         [DisplayName("Ilgis(km)")]
-        public int Length { get; set; }
+        public double Length { get; set; }
         [DisplayName("Sunkumas")]
         public Difficulity Difficulity { get; set; }
         [DisplayName("Aprašymas")]
         public string Description { get; set; }
         [DisplayName("Kaina dalyviui")]
-        public int PricePerPerson { get; set; }
+        public double PricePerPerson { get; set; }
         [DisplayName("Leistinas kiekis dalyvių")]
         public int MaxPeople { get; set; }
         public Reservation? Reservation { get; set; }

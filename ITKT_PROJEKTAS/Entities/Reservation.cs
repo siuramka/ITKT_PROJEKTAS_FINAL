@@ -11,9 +11,9 @@ namespace ITKT_PROJEKTAS.Entities
         [DisplayName("Valties tipas")]
         public BoatType Boat { get; set; }
         [DisplayName("Kaina")]
-        public int Price { get; set; }
-        [DisplayName("Akcijos suma")]
-        public int Discount { get; set; }
+        public double Price { get; set; }
+        [DisplayName("Suteikta nuolaida")]
+        public double Discount { get; set; }
         [DisplayName("Dalyviu skaičius")]
         public int PersonCount { get; set; }
         [DisplayName("Vartotojo Id")]

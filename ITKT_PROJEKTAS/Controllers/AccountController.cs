@@ -29,6 +29,7 @@ namespace ITKT_PROJEKTAS.Controllers
             return View(this.User.Claims.ToDictionary(x => x.Type, x => x.Value));
         }
 
+
         [HttpPost]
         public async Task<IActionResult> LoginAsync(LoginDto model)
         {
@@ -41,14 +42,14 @@ namespace ITKT_PROJEKTAS.Controllers
 
             await _userManager.SignIn(this.HttpContext, user, false);
 
-            if(User.IsInRole(Role.Manager.ToString()))
-            {
-                return LocalRedirect("~/Manager");
-            }
-            if (User.IsInRole(Role.Admin.ToString()))
-            {
-                return LocalRedirect("~/Admin");
-            }
+            //if(User.IsInRole(Role.Manager.ToString()))
+            //{
+            //    return LocalRedirect("~/Manager");
+            //}
+            //if (User.IsInRole(Role.Admin.ToString()))
+            //{
+            //    return LocalRedirect("~/Admin");
+            //}
             return LocalRedirect("~/Account/Profile");
         }
 

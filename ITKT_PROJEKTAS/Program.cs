@@ -1,4 +1,5 @@
 
+using AutoMapper;
 using ITKT_PROJEKTAS.Helpers;
 using ITKT_PROJEKTAS.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -10,10 +11,15 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<DataContext>();
 
+var mappingConfig = new MapperConfiguration(config =>
+{
+    config.AddProfile(new MappingProfile());
+});
+
 builder.Services.AddScoped<IUserManager, UserManager>();
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-
+builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddCors();
 builder.Services.AddControllers().AddJsonOptions(x =>
 {
@@ -46,6 +52,7 @@ if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
 }
+
 app.UseStaticFiles();
 app.MapControllers();
 

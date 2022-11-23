@@ -28,14 +28,14 @@ namespace ITKT_PROJEKTAS.Migrations
                     b.Property<int>("Boat")
                         .HasColumnType("int");
 
-                    b.Property<int>("Discount")
-                        .HasColumnType("int");
+                    b.Property<double>("Discount")
+                        .HasColumnType("double");
 
                     b.Property<int>("PersonCount")
                         .HasColumnType("int");
 
-                    b.Property<int>("Price")
-                        .HasColumnType("int");
+                    b.Property<double>("Price")
+                        .HasColumnType("double");
 
                     b.Property<int>("RouteId")
                         .HasColumnType("int");
@@ -69,8 +69,8 @@ namespace ITKT_PROJEKTAS.Migrations
                     b.Property<int>("Difficulity")
                         .HasColumnType("int");
 
-                    b.Property<int>("Length")
-                        .HasColumnType("int");
+                    b.Property<double>("Length")
+                        .HasColumnType("double");
 
                     b.Property<int>("MaxPeople")
                         .HasColumnType("int");
@@ -79,8 +79,8 @@ namespace ITKT_PROJEKTAS.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<int>("PricePerPerson")
-                        .HasColumnType("int");
+                    b.Property<double>("PricePerPerson")
+                        .HasColumnType("double");
 
                     b.HasKey("Id");
 

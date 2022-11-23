@@ -5,10 +5,10 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using ITKT_PROJEKTAS.Entities;
 using ITKT_PROJEKTAS.Helpers;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Authorization;
+using ITKT_PROJEKTAS.Models;
 
 namespace ITKT_PROJEKTAS.Controllers
 {
@@ -79,7 +79,7 @@ namespace ITKT_PROJEKTAS.Controllers
             routeOrderDTO.Date = route.Date;
             routeOrderDTO.Length = route.Length;
             routeOrderDTO.PeopleCount = 0;
-            routeOrderDTO.Id = route.Id;
+            routeOrderDTO.Passingid = route.Id;
             return View(routeOrderDTO);
         }
 

@@ -9,6 +9,7 @@ using ITKT_PROJEKTAS.Entities;
 using ITKT_PROJEKTAS.Helpers;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using ITKT_PROJEKTAS.Models;
 
 namespace ITKT_PROJEKTAS.Controllers
 {
@@ -52,19 +53,64 @@ namespace ITKT_PROJEKTAS.Controllers
         [Authorize]
         public IActionResult Create(RouteOrderDTO order)
         {
-            var reservation = new Reservation();// ??
-            var route = _context.Route.Where(s => s.Id == order.Id).FirstOrDefault();
+            var reservation = new Reservation();
+            var route = _context.Route.Where(s => s.Id == order.Passingid).FirstOrDefault();
             var userId = ((ClaimsIdentity)User.Identity).FindFirst(ClaimTypes.NameIdentifier).Value;
             var user = _context.Users.Where(u => u.Id == int.Parse(userId)).FirstOrDefault();
+
+            var userReservations = _context.Reservation.Include(r => r.User).Where(r => r.UserId == int.Parse(userId));
+
+            var userReservationSum = userReservations.Sum(x => x.Price);
+
             reservation.Boat = order.Boat;
-            reservation.Discount = 999;
+            //Skull emoji , this is awful why am I not doing this properly 
+            double totalSum = order.PeopleCount * order.PricePerPerson;
+            if (totalSum >= 200 && totalSum < 250)
+            {
+                reservation.Discount = totalSum * 0.03;
+            }
+            else if (totalSum >= 250 && totalSum < 400)
+            {
+                reservation.Discount = totalSum * 0.05;
+            }
+            else if (totalSum >= 400)
+            {
+                reservation.Discount = totalSum * 0.10;
+            }
+            else
+                reservation.Discount = 0;
+
+            //Papildoma
+            if (userReservationSum >= 1000 && userReservationSum < 2000)
+            {
+                reservation.Discount += totalSum * 0.03;
+            }
+            else if (userReservationSum >= 2000 && userReservationSum < 3000)
+            {
+                reservation.Discount += totalSum * 0.05;
+            }
+            else if (userReservationSum >= 3000)
+            {
+                reservation.Discount += totalSum * 0.10;
+            }
             reservation.PersonCount = order.PeopleCount;
-            reservation.Price = 999;
+            reservation.Price = totalSum - reservation.Discount;
             reservation.Route = route;
             reservation.User = user;
+
+
+
+
+            //Move this into business layer later lol........
+            //Nuolaidų sistema pagal vartotojo užsakymo sumą
+            //(nuo 200 lt – 3 %, 250 lt – 5 %, 400 lt – 10 %).
+            //Jei bendroje sumoje(per kelis kartus) vartotojas yra užsakęs paslaugų daugiau
+            //kaip už 1000 lt papildomai+3 %, 2000 lt + 5 %, už 3000 lt + 10 %)
+
+
             _context.Reservation.Add(reservation);
             _context.SaveChanges();
-            return View();
+            return View(reservation);
         }
 
         //// POST: Reservations/Create
@@ -175,14 +221,14 @@ namespace ITKT_PROJEKTAS.Controllers
             {
                 _context.Reservation.Remove(reservation);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool ReservationExists(int id)
         {
-          return _context.Reservation.Any(e => e.Id == id);
+            return _context.Reservation.Any(e => e.Id == id);
         }
     }
 }
