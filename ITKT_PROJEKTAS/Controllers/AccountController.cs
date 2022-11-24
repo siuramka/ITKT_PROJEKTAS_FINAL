@@ -38,7 +38,11 @@ namespace ITKT_PROJEKTAS.Controllers
 
             var user = _userRepository.Authenticate(model);
 
-            if (user == null) return View(model);
+            if (user == null)
+            {
+                ViewBag.Erorras = "Vartotojas nerastas/blogas slaptazodis";
+                return View(model);
+            }
 
             await _userManager.SignIn(this.HttpContext, user, false);
 
@@ -54,6 +58,11 @@ namespace ITKT_PROJEKTAS.Controllers
         }
 
         public IActionResult Register()
+        {
+            return View();
+        }
+
+        public IActionResult AccessDenied()
         {
             return View();
         }

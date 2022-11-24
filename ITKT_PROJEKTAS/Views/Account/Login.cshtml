@@ -15,6 +15,16 @@
                 <input class="form-control" asp-for="Password" placeholder="Password" type="password" />
             </div>
             <button class="btn btn-primary" type="submit">Prisijungti</button>
+            </br>
+            @{
+                if(ViewBag.Erorras != null)
+                {
+                    <div class="alert alert-danger" role="alert">
+                        @ViewBag.Erorras
+                    </div>
+                }
+            }
+
         </div>
     </div>
 </form>

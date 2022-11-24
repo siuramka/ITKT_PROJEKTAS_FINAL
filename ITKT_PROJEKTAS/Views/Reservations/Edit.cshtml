@@ -1,4 +1,5 @@
-﻿@model ITKT_PROJEKTAS.Entities.Reservation
+﻿@using ITKT_PROJEKTAS.Entities;
+@model ITKT_PROJEKTAS.Models.ReservationEditDTO
 
 @{
     ViewData["Title"] = "Edit";
@@ -14,14 +15,13 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
             <div class="form-group">
-                <label asp-for="RouteId" class="control-label"></label>
-                <select asp-for="RouteId" class="form-control" asp-items="ViewBag.RouteId"></select>
+                <label class="control-label">Marsrutai</label>
+                <select asp-for="RouteId" class="form-control" asp-items="ViewBag.Routes"></select>
                 <span asp-validation-for="RouteId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Boat" class="control-label"></label>
-                <select asp-for="Boat" class="form-control"></select>
-                <span asp-validation-for="Boat" class="text-danger"></span>
+                <select class="form-control" asp-for="Boat" asp-items="Html.GetEnumSelectList<BoatType>()"></select>
             </div>
             <div class="form-group">
                 <label asp-for="Price" class="control-label"></label>
@@ -39,8 +39,8 @@
                 <span asp-validation-for="PersonCount" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="UserId" class="control-label"></label>
-                <select asp-for="UserId" class="form-control" asp-items="ViewBag.UserId"></select>
+                <label class="control-label">Vartotojai</label>
+                <select asp-for="UserId" class="form-control" asp-items="ViewBag.Users"></select>
                 <span asp-validation-for="UserId" class="text-danger"></span>
             </div>
             <div class="form-group">

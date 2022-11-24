@@ -10,6 +10,9 @@ namespace ITKT_PROJEKTAS.Helpers
         {
             CreateMap<User, UserEditDTO>();
             CreateMap<UserEditDTO, User>();
+            CreateMap<ReservationEditDTO, Reservation>();
+            CreateMap<Reservation, ReservationEditDTO>();
+
 
         }
     }

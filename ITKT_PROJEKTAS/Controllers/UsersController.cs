@@ -9,9 +9,12 @@ using ITKT_PROJEKTAS.Entities;
 using ITKT_PROJEKTAS.Helpers;
 using AutoMapper;
 using ITKT_PROJEKTAS.Models;
+using Microsoft.AspNetCore.Authorization;
+using System.Data;
 
 namespace ITKT_PROJEKTAS.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class UsersController : Controller
     {
         private readonly DataContext _context;
@@ -105,7 +108,7 @@ namespace ITKT_PROJEKTAS.Controllers
                     bool usernamenameExists = _context.Users.Any(x => x.Id != user.Id && x.Username.ToLower() == user.Username.ToLower());
                     if(usernamenameExists)
                     {
-                        ViewBag.Erroras = "Vartotojo vardas jau uzimtas";
+                        ViewBag.Erroras = "Vartotojo vardas jau yra uzimtas.";
                         return View(user);
                     }
                     User usr = _mapper.Map(user, user1);

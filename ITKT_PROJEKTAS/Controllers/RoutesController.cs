@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Authorization;
 using ITKT_PROJEKTAS.Models;
 using ITKT_PROJEKTAS.Entities;
+using System.Security.Claims;
 
 namespace ITKT_PROJEKTAS.Controllers
 {
@@ -96,7 +97,8 @@ namespace ITKT_PROJEKTAS.Controllers
 
             var route = await _context.Route
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (route == null)
+            var routeReservationExists = await _context.Reservation.Include(r => r.Route).AnyAsync(z => z.RouteId == id);
+            if (route == null || routeReservationExists)
             {
                 return NotFound();
             }
@@ -122,10 +124,11 @@ namespace ITKT_PROJEKTAS.Controllers
             {
                 return NotFound();
             }
-
-            var route = await _context.Route
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (route == null)
+            var userIdstring = ((ClaimsIdentity)User.Identity).FindFirst(ClaimTypes.NameIdentifier).Value;
+            int userId = int.Parse(userIdstring);
+            var route = await _context.Route.FirstOrDefaultAsync(m => m.Id == id);
+            var reservation = await _context.Reservation.Include(u => u.User).Include(r => r.Route).Where(z => z.RouteId == id && userId == z.UserId).FirstOrDefaultAsync();
+            if (reservation == null || route == null)
             {
                 return NotFound();
             }

@@ -10,16 +10,22 @@ using ITKT_PROJEKTAS.Helpers;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using ITKT_PROJEKTAS.Models;
+using Microsoft.AspNetCore.Routing;
+using AutoMapper;
+using System.Runtime.Intrinsics.X86;
 
 namespace ITKT_PROJEKTAS.Controllers
 {
     public class ReservationsController : Controller
     {
         private readonly DataContext _context;
+        private IMapper _mapper;
 
-        public ReservationsController(DataContext context)
+        public ReservationsController(DataContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
+
         }
 
         // GET: Reservations
@@ -30,7 +36,7 @@ namespace ITKT_PROJEKTAS.Controllers
             var dataContext = _context.Reservation.Include(r => r.Route).Include(r => r.User).Where(r => r.UserId == int.Parse(userId));
             return View(await dataContext.ToListAsync());
         }
-        [Authorize]
+        [Authorize(Roles = "Manager")]
         public async Task<IActionResult> IndexAdmin()
         {
             return View(_context.Reservation.Include(r => r.Route).Include(r => r.User));
@@ -139,6 +145,7 @@ namespace ITKT_PROJEKTAS.Controllers
         //}
 
         // GET: Reservations/Edit/5
+        [Authorize(Roles = "Manager")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Reservation == null)
@@ -151,17 +158,48 @@ namespace ITKT_PROJEKTAS.Controllers
             {
                 return NotFound();
             }
-            ViewData["RouteId"] = new SelectList(_context.Route, "Id", "Id", reservation.RouteId);
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", reservation.UserId);
-            return View(reservation);
+            List<SelectListItem> users = new List<SelectListItem>();
+            foreach(var user in _context.Users)
+            {
+                string data = String.Format("{0} {1} {2} {3}",user.Id, user.Username, user.FirstName, user.LastName);
+                if (user.Id == reservation.UserId)
+                {
+                    users.Add(new SelectListItem(data, user.Id.ToString(), true));
+                }
+                else
+                {
+                    users.Add(new SelectListItem(data, user.Id.ToString()));
+                }
+            }
+            ViewData["Users"] = users;
+            List<SelectListItem> routes = new List<SelectListItem>();// select only routes that are not reserved
+            foreach (var route in _context.Route.Include(r => r.Reservation))
+            {
+                string data = String.Format("{0} {1} {2} {3}km", route.Id, route.Name, route.Date, route.Length);
+                if(route.Id == reservation.RouteId)
+                {
+                    routes.Add(new SelectListItem(data, route.Id.ToString(), true));
+                }
+                else
+                {
+                    if(route.Reservation == null)
+                    {
+                        routes.Add(new SelectListItem(data, route.Id.ToString()));
+                    }
+                }
+            }
+            ViewData["Routes"] = routes;
+
+            return View(_mapper.Map<ReservationEditDTO>(reservation));
         }
 
         // POST: Reservations/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "Manager")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,RouteId,Boat,Price,Discount,PersonCount,UserId")] Reservation reservation)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,RouteId,Boat,Price,Discount,PersonCount,UserId")] ReservationEditDTO reservation)
         {
             if (id != reservation.Id)
             {
@@ -172,7 +210,9 @@ namespace ITKT_PROJEKTAS.Controllers
             {
                 try
                 {
-                    _context.Update(reservation);
+                    var reservOld = await _context.Reservation.FindAsync(id);
+                    Reservation resrv = _mapper.Map(reservation, reservOld);
+                    _context.Update(resrv);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -188,8 +228,34 @@ namespace ITKT_PROJEKTAS.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["RouteId"] = new SelectList(_context.Route, "Id", "Id", reservation.RouteId);
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", reservation.UserId);
+            List<SelectListItem> users = new List<SelectListItem>();
+            foreach (var user in _context.Users)
+            {
+                string data = String.Format("{0} {1} {2} {3}", user.Id, user.Username, user.FirstName, user.LastName);
+                if (user.Id == reservation.UserId)
+                {
+                    users.Add(new SelectListItem(data, user.Id.ToString(), true));
+                }
+                else
+                {
+                    users.Add(new SelectListItem(data, user.Id.ToString()));
+                }
+            }
+            ViewData["Users"] = users;
+            List<SelectListItem> routes = new List<SelectListItem>();
+            foreach (var route in _context.Route)
+            {
+                string data = String.Format("{0} {1} {2} {3}km", route.Id, route.Name, route.Date, route.Length);
+                if (route.Id == reservation.RouteId)
+                {
+                    routes.Add(new SelectListItem(data, route.Id.ToString(), true));
+                }
+                else
+                {
+                    routes.Add(new SelectListItem(data, route.Id.ToString()));
+                }
+            }
+            ViewData["Routes"] = routes;
             return View(reservation);
         }
 

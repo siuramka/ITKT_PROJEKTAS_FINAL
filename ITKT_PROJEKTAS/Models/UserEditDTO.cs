@@ -9,20 +9,20 @@ namespace ITKT_PROJEKTAS.Models
     {
         [JsonIgnore]
         public int Id { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Privalomas laukas")]
         [DisplayName("Vardas")]
         public string FirstName { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Privalomas laukas")]
         [DisplayName("Pavardė")]
         public string LastName { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Privalomas laukas")]
         [DisplayName("Vartotojo vardas")]
         public string Username { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Privalomas laukas")]
         [DisplayName("Tel. Numeris")]
         [RegularExpression(@"(86|\+3706)\d{3}\d{4}", ErrorMessage = "Blogas formatas")]
         public string Phone { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Privalomas laukas")]
         public Role Role { get; set; }
 
     }

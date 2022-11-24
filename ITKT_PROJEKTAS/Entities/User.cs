@@ -8,10 +8,13 @@ public class User
 {
     public int Id { get; set; }
     [DisplayName("Vardas")]
+    [StringLength(20)]
     public string FirstName { get; set; }
     [DisplayName("Pavardė")]
+    [StringLength(20)]
     public string LastName { get; set; }
     [DisplayName("Vartotojo vardas")]
+    [StringLength(20)]
     public string Username { get; set; }
     [DisplayName("Tel. Numeris")]
     [RegularExpression(@"^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$", ErrorMessage = "Not a valid phone number")]
