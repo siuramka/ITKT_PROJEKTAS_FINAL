@@ -37,8 +37,12 @@ namespace ITKT_PROJEKTAS.Controllers
             return View(await dataContext.ToListAsync());
         }
         [Authorize(Roles = "Manager")]
-        public async Task<IActionResult> IndexAdmin()
+        public async Task<IActionResult> IndexAdmin(bool Success)
         {
+            if(Success)
+            {
+                ViewBag.Erorras = "Operacija atlikta sekmingai";
+            }
             return View(_context.Reservation.Include(r => r.Route).Include(r => r.User));
         }
 
@@ -71,8 +75,12 @@ namespace ITKT_PROJEKTAS.Controllers
             var user = _context.Users.Where(u => u.Id == int.Parse(userId)).FirstOrDefault();
 
             var userReservations = _context.Reservation.Include(r => r.User).Where(r => r.UserId == int.Parse(userId));
+            int userReservationCount = userReservations.Count();
 
             var userReservationSum = userReservations.Sum(x => x.Price);
+            Paslauga paslaugaObj = _context.Paslauga.Where(r => r.Id == order.PaslaugaId).FirstOrDefault();
+
+
 
             reservation.Boat = order.Boat;
             //Skull emoji , this is awful why am I not doing this properly 
@@ -111,7 +119,16 @@ namespace ITKT_PROJEKTAS.Controllers
             reservation.User = user;
 
 
+            if(userReservationCount < 10)
+            {
+                reservation.Price += totalSum * 0.05; // Papildoma funkcija
+            }
 
+            if (paslaugaObj != null)
+            {
+                reservation.Paslauga = paslaugaObj;
+                reservation.Price += paslaugaObj.Price;
+            }
 
             //Move this into business layer later lol........
             //Nuolaidų sistema pagal vartotojo užsakymo sumą
@@ -260,6 +277,7 @@ namespace ITKT_PROJEKTAS.Controllers
         }
 
         // GET: Reservations/Delete/5
+        [Authorize(Roles = "Manager")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Reservation == null)
@@ -280,6 +298,7 @@ namespace ITKT_PROJEKTAS.Controllers
         }
 
         // POST: Reservations/Delete/5
+        [Authorize(Roles = "Manager")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

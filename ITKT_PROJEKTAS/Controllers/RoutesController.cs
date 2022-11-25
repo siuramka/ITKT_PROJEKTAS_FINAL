@@ -93,6 +93,13 @@ namespace ITKT_PROJEKTAS.Controllers
         [Authorize]
         public async Task<IActionResult> Details(int? id)
         {
+            List<SelectListItem> paslaugos = new List<SelectListItem>();
+            foreach (var pasl in _context.Paslauga)
+            {
+                string data = String.Format("{0} {1}eur", pasl.Name, pasl.Price);
+                paslaugos.Add(new SelectListItem(data, pasl.Id.ToString()));
+            }
+            ViewData["Paslaugos"] = paslaugos;
 
             if (id == null || _context.Route == null)
             {

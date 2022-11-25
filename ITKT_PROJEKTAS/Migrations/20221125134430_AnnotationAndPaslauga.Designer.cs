@@ -3,6 +3,7 @@ using System;
 using ITKT_PROJEKTAS.Helpers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ITKT_PROJEKTAS.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20221125134430_AnnotationAndPaslauga")]
+    partial class AnnotationAndPaslauga
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -33,7 +35,12 @@ namespace ITKT_PROJEKTAS.Migrations
                     b.Property<double>("Price")
                         .HasColumnType("double");
 
+                    b.Property<int?>("UserIdManagerId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserIdManagerId");
 
                     b.ToTable("Paslauga");
                 });
@@ -150,6 +157,15 @@ namespace ITKT_PROJEKTAS.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("ITKT_PROJEKTAS.Entities.Paslauga", b =>
+                {
+                    b.HasOne("ITKT_PROJEKTAS.Entities.User", "UserIdManager")
+                        .WithMany("Paslaugos")
+                        .HasForeignKey("UserIdManagerId");
+
+                    b.Navigation("UserIdManager");
+                });
+
             modelBuilder.Entity("ITKT_PROJEKTAS.Entities.Reservation", b =>
                 {
                     b.HasOne("ITKT_PROJEKTAS.Entities.Paslauga", "Paslauga")
@@ -187,6 +203,8 @@ namespace ITKT_PROJEKTAS.Migrations
 
             modelBuilder.Entity("ITKT_PROJEKTAS.Entities.User", b =>
                 {
+                    b.Navigation("Paslaugos");
+
                     b.Navigation("Reservations");
                 });
 #pragma warning restore 612, 618

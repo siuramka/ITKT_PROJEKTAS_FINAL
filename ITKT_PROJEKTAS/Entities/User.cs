@@ -17,7 +17,7 @@ public class User
     [StringLength(20)]
     public string Username { get; set; }
     [DisplayName("Tel. Numeris")]
-    [RegularExpression(@"^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$", ErrorMessage = "Not a valid phone number")]
+    [RegularExpression(@"^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$", ErrorMessage = "Blogas formatas")]
     public string Phone { get; set; }
     public Role Role { get; set; }
 

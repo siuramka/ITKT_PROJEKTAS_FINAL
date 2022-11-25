@@ -14,6 +14,7 @@ namespace ITKT_PROJEKTAS.Entities
         [DisplayName("Data")]
         public DateTime Date { get; set; }
         [DisplayName("Ilgis(km)")]
+        [Range(0, double.MaxValue)]
         public double Length { get; set; }
         [DisplayName("Sunkumas")]
         public Difficulity Difficulity { get; set; }
@@ -21,8 +22,10 @@ namespace ITKT_PROJEKTAS.Entities
         [StringLength(100)]
         public string Description { get; set; }
         [DisplayName("Kaina dalyviui")]
+        [Range(0, double.MaxValue)]
         public double PricePerPerson { get; set; }
         [DisplayName("Leistinas kiekis dalyvių")]
+        [Range(0, int.MaxValue)]
         public int MaxPeople { get; set; }
         public Reservation? Reservation { get; set; }
     }

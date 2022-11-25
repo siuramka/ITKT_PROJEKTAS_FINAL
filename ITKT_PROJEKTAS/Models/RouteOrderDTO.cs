@@ -25,6 +25,7 @@ namespace ITKT_PROJEKTAS.Models
         public int PeopleCount { get; set; }
         [DisplayName("Dalyvių limitas")]
         public int MaxPeople { get; set; }
+        public int? PaslaugaId { get; set; }
 
     }
 }

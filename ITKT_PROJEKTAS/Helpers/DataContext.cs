@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ITKT_PROJEKTAS.Entities;
 namespace ITKT_PROJEKTAS.Helpers;
 
 using Microsoft.EntityFrameworkCore;
@@ -25,4 +26,6 @@ public class DataContext : DbContext
     public DbSet<ITKT_PROJEKTAS.Entities.Route> Route { get; set; }
 
     public DbSet<ITKT_PROJEKTAS.Entities.Reservation> Reservation { get; set; }
+
+    public DbSet<ITKT_PROJEKTAS.Entities.Paslauga> Paslauga { get; set; }
 }

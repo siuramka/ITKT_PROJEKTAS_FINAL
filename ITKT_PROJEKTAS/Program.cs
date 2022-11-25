@@ -70,3 +70,7 @@ app.MapControllerRoute(
 
 
 app.Run();
+
+
+//Rezervacijos mokesti idet visur n shit
+//paslauga pagrazint visur n shit
