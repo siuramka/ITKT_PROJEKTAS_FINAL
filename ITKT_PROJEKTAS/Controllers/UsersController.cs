@@ -27,8 +27,12 @@ namespace ITKT_PROJEKTAS.Controllers
         }
 
         // GET: Users
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(bool Success)
         {
+            if(Success)
+            {
+                ViewBag.Erorras = "Sekminai atlikta operacija";
+            }
               return View(await _context.Users.ToListAsync());
         }
 
@@ -126,7 +130,7 @@ namespace ITKT_PROJEKTAS.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index), new RouteValueDictionary(new { Success = true }));
             }
             return View(user);
         }
@@ -165,7 +169,7 @@ namespace ITKT_PROJEKTAS.Controllers
             }
             
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Index), new RouteValueDictionary(new { Success = true }));
         }
 
         private bool UserExists(int id)

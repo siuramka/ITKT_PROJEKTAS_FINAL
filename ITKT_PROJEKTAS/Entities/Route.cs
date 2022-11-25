@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components.Server;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
 namespace ITKT_PROJEKTAS.Entities
@@ -8,6 +9,7 @@ namespace ITKT_PROJEKTAS.Entities
     {
         public int Id { get; set; }
         [DisplayName("Pavadinimas")]
+        [StringLength(20)]
         public string Name { get; set; }
         [DisplayName("Data")]
         public DateTime Date { get; set; }
@@ -16,6 +18,7 @@ namespace ITKT_PROJEKTAS.Entities
         [DisplayName("Sunkumas")]
         public Difficulity Difficulity { get; set; }
         [DisplayName("Aprašymas")]
+        [StringLength(100)]
         public string Description { get; set; }
         [DisplayName("Kaina dalyviui")]
         public double PricePerPerson { get; set; }

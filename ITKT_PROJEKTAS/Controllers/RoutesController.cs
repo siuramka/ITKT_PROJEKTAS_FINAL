@@ -38,15 +38,15 @@ namespace ITKT_PROJEKTAS.Controllers
             switch (sortOrder)
             {
                 case "Difficulity":
-                    routes = routes.OrderBy(s => s.Difficulity);
+                    routes = routes.OrderBy(s => (int)s.Difficulity);
                     break;
-                case "DifficulityDesc":
-                    routes = routes.OrderByDescending(s => s.Difficulity);
+                case "difficulityDesc":
+                    routes = routes.OrderByDescending(s => (int)s.Difficulity);
                     break;
                 case "Length":
                     routes = routes.OrderBy(s => s.Length);
                     break;
-                case "LengthDesc":
+                case "lengthDesc":
                     routes = routes.OrderByDescending(s => s.Length);
                     break;
                 default:
@@ -55,8 +55,12 @@ namespace ITKT_PROJEKTAS.Controllers
             return View(routes);
         }
         [Authorize]
-        public async Task<IActionResult> IndexAdmin(string sortOrder)
+        public async Task<IActionResult> IndexAdmin(string sortOrder, bool Success)
         {
+            if(Success)
+            {
+                ViewBag.Erorras = "Atlikta operacija sekmingai.";
+            }
             ViewBag.DiffSortParm = sortOrder == "Difficulity" ? "difficulityDesc" : "Difficulity";
             ViewBag.LengthSortParm = sortOrder == "Length" ? "lengthDesc" : "Length";
             var resevations = _context.Reservation.Include(r => r.Route).Select(r => r.RouteId).ToList();
@@ -68,15 +72,15 @@ namespace ITKT_PROJEKTAS.Controllers
             switch (sortOrder)
             {
                 case "Difficulity":
-                    routes = routes.OrderBy(s => s.Difficulity);
+                    routes = routes.OrderBy(s => (int)s.Difficulity);
                     break;
-                case "DifficulityDesc":
-                    routes = routes.OrderByDescending(s => s.Difficulity);
+                case "difficulityDesc":
+                    routes = routes.OrderByDescending(s => (int)s.Difficulity);
                     break;
                 case "Length":
                     routes = routes.OrderBy(s => s.Length);
                     break;
-                case "LengthDesc":
+                case "lengthDesc":
                     routes = routes.OrderByDescending(s => s.Length);
                     break;
                 default:
@@ -153,7 +157,10 @@ namespace ITKT_PROJEKTAS.Controllers
             {
                 _context.Add(route);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(IndexAdmin), new RouteValueDictionary(new
+                {
+                    Success = true
+                }));
             }
             IEnumerable<ModelError> allErrors = ModelState.Values.SelectMany(v => v.Errors);
             return View(route);
@@ -246,7 +253,7 @@ namespace ITKT_PROJEKTAS.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(IndexAdmin));
+                return RedirectToAction(nameof(IndexAdmin), new RouteValueDictionary(new { Success = true }));
             }
             return View(route);
         }
@@ -285,7 +292,10 @@ namespace ITKT_PROJEKTAS.Controllers
             }
 
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(IndexAdmin), new RouteValueDictionary(new
+            {
+                Success = true
+            }));
         }
         [HttpPost, ActionName("PassOrder")]
         [ValidateAntiForgeryToken]
@@ -293,7 +303,7 @@ namespace ITKT_PROJEKTAS.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return Problem("Klaida");
+                return View("Details",order);
             }
             return RedirectToAction("Create", "Reservations", order);
         }

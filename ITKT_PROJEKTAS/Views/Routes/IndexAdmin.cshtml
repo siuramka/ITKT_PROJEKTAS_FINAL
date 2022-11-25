@@ -4,11 +4,21 @@
     ViewData["Title"] = "Maršrutai - ";
 }
 
-<h1>IndexAdmin</h1>
 @ViewBag.Update
 <p>
     <a asp-action="Create">Sukurti maršrutą</a>
 </p>
+</br>
+@{
+    if (ViewBag.Erorras != null)
+    {
+        <div class="form-group">
+            <div class="alert alert-success" role="alert">
+                @ViewBag.Erorras
+            </div>
+        </div>
+    }
+}
 <table class="table">
     <thead>
         <tr>
@@ -61,7 +71,8 @@
                 @Html.DisplayFor(modelItem => item.MaxPeople)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Redagavimas</a> |
+                    <a asp-action="Edit" asp-route-id="@item.Id">Redagavimas</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Ištrinti</a> 
             </td>
         </tr>
 }

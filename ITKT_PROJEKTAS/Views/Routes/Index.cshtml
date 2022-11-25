@@ -19,10 +19,10 @@
                 @Html.DisplayNameFor(model => model.Date)
             </th>
            <th>  
-                @Html.ActionLink("Length", "Index", new { sortOrder = ViewBag.LengthSortParm })  
+                @Html.ActionLink("Ilgis", "Index", new { sortOrder = ViewBag.LengthSortParm })  
             </th>
            <th>  
-                @Html.ActionLink("Difficulity", "Index", new { sortOrder = ViewBag.DiffSortParm })  
+                @Html.ActionLink("Sunkumas", "Index", new { sortOrder = ViewBag.DiffSortParm })  
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Description)
@@ -61,7 +61,7 @@
                 @Html.DisplayFor(modelItem => item.MaxPeople)
             </td>
             <td>
-                <a asp-action="Details" asp-route-id="@item.Id">Užsakymas</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Rezervuoti</a> |
             </td>
         </tr>
 }

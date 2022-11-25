@@ -45,8 +45,8 @@ namespace ITKT_PROJEKTAS.Services
             usr.PasswordHash = BCryptNet.HashPassword(model.Password);
 
             usr.Phone = model.Phone;
-            usr.FirstName = model.Phone;
-            usr.LastName = model.Phone;
+            usr.FirstName = model.FirstName;
+            usr.LastName = model.LastName;
             usr.Username = model.Username;
 
 
