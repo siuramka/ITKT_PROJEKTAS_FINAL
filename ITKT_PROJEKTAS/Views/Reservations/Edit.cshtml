@@ -44,6 +44,25 @@
                 <span asp-validation-for="UserId" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <div class="form-group">
+                    <label>Paslaugos</label>
+                    <dd class="col-sm-10">
+                        @Html.DropDownListFor(model => model.PaslaugaId,
+                        (IEnumerable<SelectListItem>)ViewBag.Paslaugos,"Nereikalinga paslauga", new { @class = "form-control" })
+                    </dd>
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="PersonCount" class="control-label"></label>
+                <input asp-for="PersonCount" class="form-control" />
+                <span asp-validation-for="PersonCount" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ReservationCost" class="control-label"></label>
+                <input asp-for="ReservationCost" class="form-control" />
+                <span asp-validation-for="ReservationCost" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
         </form>
@@ -51,7 +70,7 @@
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="IndexAdmin">Atgal</a>
 </div>
 
 @section Scripts {

@@ -34,26 +34,38 @@
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.Discount)
         </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.ReservationCost)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.ReservationCost)
+        </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.PersonCount)
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.PersonCount)
         </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Paslauga.Name)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Paslauga.Name)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Paslauga.Price)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Paslauga.Price)
-        </dd>
+        @{
+            if(Model.Paslauga != null)
+            {
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.Paslauga.Name)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.Paslauga.Name)
+                </dd>
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.Paslauga.Price)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.Paslauga.Price)
+                </dd>
+            }
+        }
+
     </dl>
 </div>
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">Atgal</a>
 </div>

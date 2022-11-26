@@ -33,13 +33,13 @@ namespace ITKT_PROJEKTAS.Controllers
         public async Task<IActionResult> Index()
         {
             var userId = ((ClaimsIdentity)User.Identity).FindFirst(ClaimTypes.NameIdentifier).Value;
-            var dataContext = _context.Reservation.Include(r => r.Route).Include(r => r.User).Where(r => r.UserId == int.Parse(userId));
+            var dataContext = _context.Reservation.Include(r => r.Route).Include(r => r.User).Include(p => p.Paslauga).Where(r => r.UserId == int.Parse(userId));
             return View(await dataContext.ToListAsync());
         }
         [Authorize(Roles = "Manager")]
         public async Task<IActionResult> IndexAdmin(bool Success)
         {
-            if(Success)
+            if (Success)
             {
                 ViewBag.Erorras = "Operacija atlikta sekmingai";
             }
@@ -118,10 +118,12 @@ namespace ITKT_PROJEKTAS.Controllers
             reservation.Route = route;
             reservation.User = user;
 
+  
 
-            if(userReservationCount < 10)
+            if (userReservationCount < 10)
             {
-                reservation.Price += totalSum * 0.05; // Papildoma funkcija
+                reservation.ReservationCost = totalSum * 0.05;
+                reservation.Price += reservation.ReservationCost;// Papildoma funkcija
             }
 
             if (paslaugaObj != null)
@@ -136,6 +138,9 @@ namespace ITKT_PROJEKTAS.Controllers
             //Jei bendroje sumoje(per kelis kartus) vartotojas yra užsakęs paslaugų daugiau
             //kaip už 1000 lt papildomai+3 %, 2000 lt + 5 %, už 3000 lt + 10 %)
 
+            reservation.Discount = Math.Round(reservation.Discount,2);
+            reservation.Price = Math.Round(reservation.Price,2);
+            reservation.ReservationCost = Math.Round(reservation.ReservationCost,2);
 
             _context.Reservation.Add(reservation);
             _context.SaveChanges();
@@ -176,9 +181,9 @@ namespace ITKT_PROJEKTAS.Controllers
                 return NotFound();
             }
             List<SelectListItem> users = new List<SelectListItem>();
-            foreach(var user in _context.Users)
+            foreach (var user in _context.Users)
             {
-                string data = String.Format("{0} {1} {2} {3}",user.Id, user.Username, user.FirstName, user.LastName);
+                string data = String.Format("{0} {1} {2} {3}", user.Id, user.Username, user.FirstName, user.LastName);
                 if (user.Id == reservation.UserId)
                 {
                     users.Add(new SelectListItem(data, user.Id.ToString(), true));
@@ -188,18 +193,36 @@ namespace ITKT_PROJEKTAS.Controllers
                     users.Add(new SelectListItem(data, user.Id.ToString()));
                 }
             }
+            List<SelectListItem> paslaugos = new List<SelectListItem>();
+            foreach (var pasl in _context.Paslauga)
+            {
+                string data = String.Format("{0} {1}eur", pasl.Name, pasl.Price);
+                if (reservation.PaslaugaId != null)
+                {
+                    if (pasl.Id == reservation.PaslaugaId)
+                    {
+
+                        paslaugos.Add(new SelectListItem(data, pasl.Id.ToString(), true));
+                    }
+                }
+                else
+                {
+                    paslaugos.Add(new SelectListItem(data, pasl.Id.ToString()));
+                }
+            }
+            ViewData["Paslaugos"] = paslaugos;
             ViewData["Users"] = users;
             List<SelectListItem> routes = new List<SelectListItem>();// select only routes that are not reserved
             foreach (var route in _context.Route.Include(r => r.Reservation))
             {
                 string data = String.Format("{0} {1} {2} {3}km", route.Id, route.Name, route.Date, route.Length);
-                if(route.Id == reservation.RouteId)
+                if (route.Id == reservation.RouteId)
                 {
                     routes.Add(new SelectListItem(data, route.Id.ToString(), true));
                 }
                 else
                 {
-                    if(route.Reservation == null)
+                    if (route.Reservation == null)
                     {
                         routes.Add(new SelectListItem(data, route.Id.ToString()));
                     }
@@ -216,7 +239,7 @@ namespace ITKT_PROJEKTAS.Controllers
         [Authorize(Roles = "Manager")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,RouteId,Boat,Price,Discount,PersonCount,UserId")] ReservationEditDTO reservation)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,RouteId,Boat,Price,Discount,PersonCount,UserId, PaslaugaId")] ReservationEditDTO reservation)
         {
             if (id != reservation.Id)
             {
@@ -243,7 +266,10 @@ namespace ITKT_PROJEKTAS.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(IndexAdmin), new RouteValueDictionary(new
+                {
+                    Success = true
+                }));
             }
             List<SelectListItem> users = new List<SelectListItem>();
             foreach (var user in _context.Users)
@@ -259,6 +285,24 @@ namespace ITKT_PROJEKTAS.Controllers
                 }
             }
             ViewData["Users"] = users;
+            List<SelectListItem> paslaugos = new List<SelectListItem>();
+            foreach (var pasl in _context.Paslauga)
+            {
+                string data = String.Format("{0} {1}eur", pasl.Name, pasl.Price);
+                if (reservation.PaslaugaId != null)
+                {
+                    if (pasl.Id == reservation.PaslaugaId)
+                    {
+
+                        paslaugos.Add(new SelectListItem(data, pasl.Id.ToString(), true));
+                    }
+                }
+                else
+                {
+                    paslaugos.Add(new SelectListItem(data, pasl.Id.ToString()));
+                }
+            }
+            ViewData["Paslaugos"] = paslaugos;
             List<SelectListItem> routes = new List<SelectListItem>();
             foreach (var route in _context.Route)
             {
@@ -314,7 +358,10 @@ namespace ITKT_PROJEKTAS.Controllers
             }
 
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(IndexAdmin), new RouteValueDictionary(new
+            {
+                Success = true
+            }));
         }
 
         private bool ReservationExists(int id)

@@ -138,6 +138,10 @@ namespace ITKT_PROJEKTAS.Controllers
             var userIdstring = ((ClaimsIdentity)User.Identity).FindFirst(ClaimTypes.NameIdentifier).Value;
             int userId = int.Parse(userIdstring);
             var route = await _context.Route.FirstOrDefaultAsync(m => m.Id == id);
+            if(route != null&& User.IsInRole("Manager"))
+            {
+                return View(route);
+            }
             var reservation = await _context.Reservation.Include(u => u.User).Include(r => r.Route).Where(z => z.RouteId == id && userId == z.UserId).FirstOrDefaultAsync();
             if (reservation == null || route == null)
             {

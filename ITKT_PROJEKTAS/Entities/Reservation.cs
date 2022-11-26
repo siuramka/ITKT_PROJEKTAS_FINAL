@@ -32,6 +32,6 @@ namespace ITKT_PROJEKTAS.Entities
         [DisplayName("Rezervacijos mokestis")]
         [Required(ErrorMessage = "Privalomas laukas")]
         [Range(0, int.MaxValue)]
-        public double ReservationCost { get; set; }
+        public double ReservationCost { get; set; } = 0;
     }
 }

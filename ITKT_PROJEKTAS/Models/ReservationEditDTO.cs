@@ -22,6 +22,11 @@ namespace ITKT_PROJEKTAS.Models
         [System.ComponentModel.DataAnnotations.Required(ErrorMessage = "Privalomas laukas")]
         [DisplayName("Dalyviu skaičius")]
         public int PersonCount { get; set; }
+        [DisplayName("Rezervacijos mokestis")]
+        [System.ComponentModel.DataAnnotations.Required(ErrorMessage = "Privalomas laukas")]
+        [Range(0, int.MaxValue)]
+        public double ReservationCost { get; set; } = 0;
         public int UserId { get; set; }
+        public int? PaslaugaId { get; set; }
     }
 }

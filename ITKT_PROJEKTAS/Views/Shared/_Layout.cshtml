@@ -24,7 +24,7 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">ITKT_PROJEKTAS</a>
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Vandens turizmo portalasS</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -32,7 +32,7 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Pagrindinis</a>
                         </li>
 
                         @{
@@ -43,18 +43,6 @@
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Login">Prisijungti</a>
-                                </li>
-                            }
-                            if (User.IsInRole(Role.Admin.ToString()))
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="Index">Administravimo aplinka</a>
-                                </li>
-                            }
-                            if (User.IsInRole(Role.Manager.ToString()))
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Manager" asp-action="Index">Vadybinino aplinka</a>
                                 </li>
                             }
                             if (User.Identity.IsAuthenticated)
@@ -68,6 +56,18 @@
                             <li class="nav-item me-auto">
                                  <a class="nav-link text-dark me-auto" asp-area="" asp-controller="Account" asp-action="Logout">Atsijungti</a>
                              </li>
+                            }
+                            if (User.IsInRole(Role.Admin.ToString()))
+                            {
+                                <li class="nav-item">
+                                    <strong><a class="nav-link text-dark text-" asp-area="" asp-controller="Admin" asp-action="Index">Administravimo aplinka</a></strong>
+                                </li>
+                            }
+                            if (User.IsInRole(Role.Manager.ToString()))
+                            {
+                                <li class="nav-item">
+                                    <strong><a class="nav-link text-dark" asp-area="" asp-controller="Manager" asp-action="Index">Vadybinino aplinka</a></strong>
+                                </li>
                             }
                         }
 
@@ -84,7 +84,7 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2022 - Marius Kamarauskas IFF0/8 - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; 2022 - Marius Kamarauskas IFF0/8 - Vandens turizmo portalas
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

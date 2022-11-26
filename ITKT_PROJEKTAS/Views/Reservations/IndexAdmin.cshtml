@@ -40,8 +40,8 @@
     <tbody>
 @foreach (var item in Model) {
         <tr>
-            <td>aaa
-                <a href="Routes/Details/@Html.DisplayFor(modelItem => item.Route.Id)">@Html.DisplayFor(modelItem => item.Route.Name)</a>
+            <td>
+                <a href="/Routes/DetailsUser/@Html.DisplayFor(modelItem => item.Route.Id)">@Html.DisplayFor(modelItem => item.Route.Name)</a>
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Boat)
