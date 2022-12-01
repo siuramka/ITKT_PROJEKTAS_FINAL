@@ -19,7 +19,7 @@ namespace ITKT_PROJEKTAS.Entities
         [DisplayName("Sunkumas")]
         public Difficulity Difficulity { get; set; }
         [DisplayName("Aprašymas")]
-        [StringLength(100)]
+        [StringLength(1000)]
         public string Description { get; set; }
         [DisplayName("Kaina dalyviui")]
         [Range(0, double.MaxValue)]
