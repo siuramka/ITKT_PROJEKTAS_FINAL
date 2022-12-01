@@ -91,8 +91,21 @@ namespace ITKT_PROJEKTAS.Controllers
 
         // GET: Routes/Details/5
         [Authorize]
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int? id, int errr)
         {
+            if(errr == 1)
+            {
+                ViewBag.Erorras = "Pasirinktas skačius žmonių netelpa baidarėse. Baidarės yra dvi-vietės.";
+            }
+            else if(errr ==2)
+            {
+                ViewBag.Erorras = "Pasirinktas skaičius žmonių netelpa kanojose. Kanojos yra keturvietės.";
+            }
+            else if (errr == 3)
+            {
+                ViewBag.Erorras = "Pasirinktas skačius žmonių netelpa valtyse. Valtis yra sešiavietė.";
+            }
+
             List<SelectListItem> paslaugos = new List<SelectListItem>();
             foreach (var pasl in _context.Paslauga)
             {
@@ -312,9 +325,22 @@ namespace ITKT_PROJEKTAS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> PassOrder(RouteOrderDTO order)
         {
+            TempData["ErrorMessage"] = "This is the message";
             if (!ModelState.IsValid)
             {
-                return View("Details",order);
+                return View("Details");
+            }
+            if (order.Boat == BoatType.Baidare && order.PeopleCount % 2 != 0)
+            {
+                return RedirectToAction("Details", new RouteValueDictionary(new { id = order.Passingid, errr = 1 }));
+            }
+            else if(order.Boat == BoatType.Kanoja && order.PeopleCount % 4 != 0)
+            {
+                return RedirectToAction("Details", new RouteValueDictionary(new { id = order.Passingid, errr = 2 }));
+            }
+            else if(order.Boat == BoatType.Valtis && order.PeopleCount % 6 != 0)
+            {
+                return RedirectToAction("Details", new RouteValueDictionary(new { id = order.Passingid, errr = 3 }));
             }
             return RedirectToAction("Create", "Reservations", order);
         }
