@@ -11,20 +11,24 @@ using Microsoft.AspNetCore.Authorization;
 using ITKT_PROJEKTAS.Models;
 using ITKT_PROJEKTAS.Entities;
 using System.Security.Claims;
+using System.Xml.Linq;
+using AutoMapper;
 
 namespace ITKT_PROJEKTAS.Controllers
 {
     public class RoutesController : Controller
     {
         private readonly DataContext _context;
+        private IMapper _mapper;
 
-        public RoutesController(DataContext context)
+        public RoutesController(DataContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         // GET: Routes
-        [Authorize]
+        [Authorize(Roles = "User")]
         public async Task<IActionResult> Index(string sortOrder)
         {
             ViewBag.DiffSortParm = sortOrder == "Difficulity" ? "difficulityDesc" : "Difficulity";
@@ -34,7 +38,8 @@ namespace ITKT_PROJEKTAS.Controllers
             //var customerIds = deserializedCustomers.Select(x => x.CustomerID).ToList();
             //var customers = context.Customers.Where(x => !customerIds.Contains(x.CustomerID)).ToList();
             //var routes = _context.Route.Where(x => !_context.Reservation.Include(r => r.Route).Any(x2 => x2.Route.Id == x.Id));
-            var routes = _context.Route.Where(x => !resevations.Contains(x.Id)).Select(x => x);
+            //sitas buvo var routes = _context.Route.Where(x => !resevations.Contains(x.Id)).Select(x => x);
+            var routes = _context.Route.Select(x => x);
             switch (sortOrder)
             {
                 case "Difficulity":
@@ -54,7 +59,7 @@ namespace ITKT_PROJEKTAS.Controllers
             }
             return View(routes);
         }
-        [Authorize]
+        [Authorize(Roles = "Manager")]
         public async Task<IActionResult> IndexAdmin(string sortOrder, bool Success)
         {
             if(Success)
@@ -90,7 +95,7 @@ namespace ITKT_PROJEKTAS.Controllers
         }
 
         // GET: Routes/Details/5
-        [Authorize]
+        [Authorize(Roles = "User")]
         public async Task<IActionResult> Details(int? id, int errr)
         {
             if(errr == 1)
@@ -122,8 +127,9 @@ namespace ITKT_PROJEKTAS.Controllers
             var route = await _context.Route
                 .FirstOrDefaultAsync(m => m.Id == id);
             var routeReservationExists = await _context.Reservation.Include(r => r.Route).AnyAsync(z => z.RouteId == id);
-            if (route == null || routeReservationExists)
-            {
+            //if (route == null || routeReservationExists)
+            if (route == null)
+                {
                 return NotFound();
             }
             //:D
@@ -137,13 +143,20 @@ namespace ITKT_PROJEKTAS.Controllers
             routeOrderDTO.Length = route.Length;
             routeOrderDTO.PeopleCount = 0;
             routeOrderDTO.Passingid = route.Id;
+
+            var routePictures = _context.Route.Include(r => r.Pictures).Where(z => z.Id == route.Id).Select(p => p.Pictures).FirstOrDefault();
+            ViewBag.Pictures = routePictures.ToList();
+            
             return View(routeOrderDTO);
         }
         // GET: Routes/DetailsUser/5
-        [Authorize]
-        public async Task<IActionResult> DetailsUser(int? id)
+        [Authorize(Roles = "User")]
+        public async Task<IActionResult> DetailsUser(int? id, int err)
         {
-
+            if(err == 1)
+            {
+                ViewBag.Erorras = "Nepasirinktas paveikslelis/blogas formatas";
+            }
             if (id == null || _context.Route == null)
             {
                 return NotFound();
@@ -160,11 +173,13 @@ namespace ITKT_PROJEKTAS.Controllers
             {
                 return NotFound();
             }
-            return View(route);
+           
+            
+            return View(_mapper.Map<RouteImageDTO>(route));
         }
 
         // GET: Routes/Create
-        [Authorize()]
+        [Authorize(Roles = "Manager")]
         public IActionResult Create()
         {
             return View();
@@ -191,6 +206,7 @@ namespace ITKT_PROJEKTAS.Controllers
         }
 
         // GET: Routes/Edit/5
+        [Authorize(Roles = "Manager")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Route == null)
@@ -283,6 +299,7 @@ namespace ITKT_PROJEKTAS.Controllers
         }
 
         // GET: Routes/Delete/5
+        [Authorize(Roles = "Manager")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Route == null)
@@ -301,6 +318,7 @@ namespace ITKT_PROJEKTAS.Controllers
         }
 
         // POST: Routes/Delete/5
+        [Authorize(Roles = "Manager")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -325,7 +343,6 @@ namespace ITKT_PROJEKTAS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> PassOrder(RouteOrderDTO order)
         {
-            TempData["ErrorMessage"] = "This is the message";
             if (!ModelState.IsValid)
             {
                 return View("Details");
@@ -345,6 +362,49 @@ namespace ITKT_PROJEKTAS.Controllers
             return RedirectToAction("Create", "Reservations", order);
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult DetailsUser(RouteImageDTO userViewModel)
+        {
+            if (userViewModel is null)
+            {
+                throw new ArgumentNullException(nameof(userViewModel));
+            }
+
+
+            var routess = _context.Route.Where(r => r.Id == userViewModel.Id).FirstOrDefault();
+            userViewModel.Description = routess.Description;
+            userViewModel.Name = routess.Name;
+            if (userViewModel.Picture is null)
+            {
+                return RedirectToAction(nameof(DetailsUser), new RouteValueDictionary(new
+                {
+                    Id = userViewModel.Id,
+                    err = 1
+                }));
+            }
+            var Name = userViewModel.Picture.Name;
+            var PictureFormat = userViewModel.Picture.ContentType;
+
+
+            var memoryStream = new MemoryStream();
+            userViewModel.Picture.CopyTo(memoryStream);
+            var userPicture = memoryStream.ToArray();
+
+            //_context
+            var userIdstring = ((ClaimsIdentity)User.Identity).FindFirst(ClaimTypes.NameIdentifier).Value;
+            int userId = int.Parse(userIdstring);
+            var routes = _context.Route.Include(z => z.Pictures).FirstOrDefault(r => r.Id == userViewModel.Id);
+            if(routes != null)
+            {
+                    Picture picturez = new Picture();
+                    picturez.PictureBytes = userPicture;
+                    picturez.PictureFormat = userViewModel.Picture.ContentType;
+                    routes.Pictures.Add(picturez);
+            }
+            _context.SaveChanges();
+            return RedirectToAction("Index");
+        }
         private bool RouteExists(int id)
         {
             return _context.Route.Any(e => e.Id == id);

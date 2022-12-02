@@ -13,7 +13,8 @@ namespace ITKT_PROJEKTAS.Helpers
             CreateMap<ReservationEditDTO, Reservation>();
             CreateMap<Reservation, ReservationEditDTO>();
 
-
+            CreateMap<RouteImageDTO, Entities.Route>();
+            CreateMap<Entities.Route, RouteImageDTO>();
         }
     }
 }

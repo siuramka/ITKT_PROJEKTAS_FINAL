@@ -3,6 +3,7 @@ using System;
 using ITKT_PROJEKTAS.Helpers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ITKT_PROJEKTAS.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20221201175834_multiplepaslaugos")]
+    partial class multiplepaslaugos
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -36,35 +38,6 @@ namespace ITKT_PROJEKTAS.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Paslauga");
-                });
-
-            modelBuilder.Entity("ITKT_PROJEKTAS.Entities.Picture", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<byte[]>("PictureBytes")
-                        .IsRequired()
-                        .HasColumnType("longblob");
-
-                    b.Property<string>("PictureFormat")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<int?>("RouteRouteId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("UserUserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("RouteRouteId");
-
-                    b.HasIndex("UserUserId");
-
-                    b.ToTable("Picture");
                 });
 
             modelBuilder.Entity("ITKT_PROJEKTAS.Entities.Reservation", b =>
@@ -192,21 +165,6 @@ namespace ITKT_PROJEKTAS.Migrations
                     b.ToTable("PaslaugaReservation");
                 });
 
-            modelBuilder.Entity("ITKT_PROJEKTAS.Entities.Picture", b =>
-                {
-                    b.HasOne("ITKT_PROJEKTAS.Entities.Route", "RouteRoute")
-                        .WithMany("Pictures")
-                        .HasForeignKey("RouteRouteId");
-
-                    b.HasOne("ITKT_PROJEKTAS.Entities.User", "UserUser")
-                        .WithMany()
-                        .HasForeignKey("UserUserId");
-
-                    b.Navigation("RouteRoute");
-
-                    b.Navigation("UserUser");
-                });
-
             modelBuilder.Entity("ITKT_PROJEKTAS.Entities.Reservation", b =>
                 {
                     b.HasOne("ITKT_PROJEKTAS.Entities.Route", "Route")
@@ -243,8 +201,6 @@ namespace ITKT_PROJEKTAS.Migrations
 
             modelBuilder.Entity("ITKT_PROJEKTAS.Entities.Route", b =>
                 {
-                    b.Navigation("Pictures");
-
                     b.Navigation("Reservation");
                 });
 

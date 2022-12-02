@@ -159,11 +159,10 @@ namespace ITKT_PROJEKTAS.Controllers
             var paslauga = await _context.Paslauga.FindAsync(id);
             if (paslauga != null)
             {
-                var reservations = _context.Reservation.Include(r => r.Paslauga).Where(r => r.PaslaugaId == id);
+                var reservations = _context.Reservation.Include(d => d.Paslauga).ToList();
                 foreach(var resv in reservations)
                 {
-                    resv.Paslauga = null;
-                    resv.PaslaugaId = null;
+                    resv.Paslauga.Remove(paslauga);
                 }
                 await _context.SaveChangesAsync();
                 _context.Paslauga.Remove(paslauga);

@@ -29,7 +29,7 @@ namespace ITKT_PROJEKTAS.Controllers
         }
 
         // GET: Reservations
-        [Authorize]
+        [Authorize(Roles = "User")]
         public async Task<IActionResult> Index()
         {
             var userId = ((ClaimsIdentity)User.Identity).FindFirst(ClaimTypes.NameIdentifier).Value;
@@ -47,7 +47,7 @@ namespace ITKT_PROJEKTAS.Controllers
         }
 
         // GET: Reservations/Details/5
-        [Authorize]
+        [Authorize(Roles = "User")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null || _context.Reservation == null)
@@ -66,7 +66,7 @@ namespace ITKT_PROJEKTAS.Controllers
 
             return View(reservation);
         }
-        [Authorize]
+        [Authorize(Roles = "User")]
         public IActionResult Create(RouteOrderDTO order)
         {
             var reservation = new Reservation();
@@ -78,7 +78,7 @@ namespace ITKT_PROJEKTAS.Controllers
             int userReservationCount = userReservations.Count();
 
             var userReservationSum = userReservations.Sum(x => x.Price);
-            Paslauga paslaugaObj = _context.Paslauga.Where(r => r.Id == order.PaslaugaId).FirstOrDefault();
+            //Paslauga paslaugaObj = _context.Paslauga.Where(r => r.Id == order.PaslaugaId).FirstOrDefault();
 
 
 
@@ -126,11 +126,11 @@ namespace ITKT_PROJEKTAS.Controllers
                 reservation.Price += reservation.ReservationCost;// Papildoma funkcija
             }
 
-            if (paslaugaObj != null)
-            {
-                reservation.Paslauga = paslaugaObj;
-                reservation.Price += paslaugaObj.Price;
-            }
+            //if (paslaugaObj != null)
+            //{
+            //    reservation.Paslauga = paslaugaObj;
+            //    reservation.Price += paslaugaObj.Price;
+            //}
 
             //Move this into business layer later lol........
             //Nuolaidų sistema pagal vartotojo užsakymo sumą
@@ -196,19 +196,19 @@ namespace ITKT_PROJEKTAS.Controllers
             List<SelectListItem> paslaugos = new List<SelectListItem>();
             foreach (var pasl in _context.Paslauga)
             {
-                string data = String.Format("{0} {1}eur", pasl.Name, pasl.Price);
-                if (reservation.PaslaugaId != null)
-                {
-                    if (pasl.Id == reservation.PaslaugaId)
-                    {
+                //string data = String.Format("{0} {1}eur", pasl.Name, pasl.Price);
+                //if (reservation.PaslaugaId != null)
+                //{
+                //    if (pasl.Id == reservation.PaslaugaId)
+                //    {
 
-                        paslaugos.Add(new SelectListItem(data, pasl.Id.ToString(), true));
-                    }
-                }
-                else
-                {
-                    paslaugos.Add(new SelectListItem(data, pasl.Id.ToString()));
-                }
+                //        paslaugos.Add(new SelectListItem(data, pasl.Id.ToString(), true));
+                //    }
+                //}
+                //else
+                //{
+                //    paslaugos.Add(new SelectListItem(data, pasl.Id.ToString()));
+                //}
             }
             ViewData["Paslaugos"] = paslaugos;
             ViewData["Users"] = users;

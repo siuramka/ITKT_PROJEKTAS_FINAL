@@ -27,8 +27,7 @@ namespace ITKT_PROJEKTAS.Entities
         [DisplayName("Uzsakovo Id")]
         public int UserId { get; set; }
         public User? User { get; set; }
-        public int? PaslaugaId { get; set; }
-        public Paslauga? Paslauga { get; set; }
+        public ICollection<Paslauga>? Paslauga { get; set; }
         [DisplayName("Rezervacijos mokestis")]
         [Required(ErrorMessage = "Privalomas laukas")]
         [Range(0, int.MaxValue)]

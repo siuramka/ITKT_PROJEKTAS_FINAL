@@ -9,7 +9,7 @@ namespace ITKT_PROJEKTAS.Entities
     {
         public int Id { get; set; }
         [DisplayName("Pavadinimas")]
-        [StringLength(20)]
+        [StringLength(60)]
         public string Name { get; set; }
         [DisplayName("Data")]
         public DateTime Date { get; set; }
@@ -28,5 +28,6 @@ namespace ITKT_PROJEKTAS.Entities
         [Range(0, int.MaxValue)]
         public int MaxPeople { get; set; }
         public Reservation? Reservation { get; set; }
+        public ICollection<Picture> Pictures { get; set; }
     }
 }
