@@ -3,13 +3,45 @@
 @{
     ViewData["Title"] = "Maršrutai";
 }
+<h3>Rusiuoti</h3>
+<th>  
+    @Html.ActionLink("Ilgis", "Index", new { sortOrder = ViewBag.LengthSortParm })  
+</th>
+<th>  
+    @Html.ActionLink("Sunkumas", "Index", new { sortOrder = ViewBag.DiffSortParm })  
+</th>
 
+
+<h1>Marsrutai</h1>
+    <div class="container">
+        <div class="row">
+    @for (int i = 0; i < Model.ToList().Count; i++)
+    {
+        if (i > 0 && i % 3 == 0)
+        {
+            @:</div><br> <class="row">
+        }
+                        <div class="col">
+                                    <div class="card" style="width: 250px; height: 250px">
+                                      <div id="_@Model.ToList()[i].Id.ToString()map" class="card-img-top" style="width: 250px; height: 250px"></div>
+                                      <div class="card-body">
+                                        <a asp-action="Details" class="btn btn-primary" asp-route-id="@Model.ToList()[i].Id">Rezervuoti</a>
+                       
+                                      </div>
+                                    </div>
+
+                                                    
+                                    
+                        </div>
+                        
+    }
+        </div>
+    </div>
 @{
     int x = 0;
     foreach(var item in Model)
     {
-        <div id="@item.Id.ToString()map" style="width: 250px; height: 250px"></div>
-        x++;
+
     }
 }
 
@@ -21,14 +53,12 @@
         @foreach (var r in Model)
         {            
             <text>
-            var _@r.Id.ToString()map = L.map('_@r.Id.ToString()map').setView([51.505, -0.09], 13);
+            var _@r.Id.ToString()map = L.map('_@r.Id.ToString()map').setView([@r.Lattitude, @r.Longtitude], 13);
 
-            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            }).addTo(_@r.Id.ToString()map);
+            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(_@r.Id.ToString()map);
 
-            L.marker([51.5, -0.09]).addTo(_@r.Id.ToString()map)
-                .bindPopup('A pretty CSS3 popup.<br> Easily customizable.')
+            L.marker([@r.Lattitude, @r.Longtitude]).addTo(_@r.Id.ToString()map)
+                .bindPopup('@r.Name @r.Length km. @r.Difficulity')
                 .openPopup();
             </text>
         }
