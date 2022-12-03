@@ -4,55 +4,33 @@
 @{
     ViewData["Title"] = "Rezervacijos kūrimas";
 }
-@section scripts {
-    <s
-    $("#Paslauga").mousedown(function(e){
-        e.preventDefault();
-    
-		    var select = this;
-        var scroll = select.scrollTop;
-    
-        e.target.selected = !e.target.selected;
-    
-        setTimeout(function(){select.scrollTop = scroll;}, 0);
-    
-        $(select).focus();
-    }).mousemove(function(e){e.preventDefault()});
-    </script>
-}
 <h1>Rezervacija</h1>
 
 <div class="row">
     <div class="col-md-4">
         <form asp-action="PassOrder">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Passingid" />
             <input type="hidden" asp-for="Description" />
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
                 <input asp-for="Name" class="form-control" readonly />
-                <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Date" class="control-label"></label>
                 <input asp-for="Date" class="form-control" readonly />
-                <span asp-validation-for="Date" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Length" class="control-label"></label>
                 <input asp-for="Length" class="form-control" readonly />
-                <span asp-validation-for="Length" class="text-danger"></span>
             </div>
 
             <div class="form-group">
                 <label asp-for="PricePerPerson" class="control-label"></label>
                 <input asp-for="PricePerPerson" class="form-control" readonly />
-                <span asp-validation-for="PricePerPerson" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="MaxPeople" class="control-label"></label>
                 <input asp-for="MaxPeople" class="form-control" readonly/>
-                <span asp-validation-for="MaxPeople" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <div class="form-group">
@@ -78,17 +56,48 @@
             </div>
             <div class="form-group">
                 <label asp-for="PeopleCount" class="control-label"></label>
-                <dd class="col-sm-10">
-                    @Html.DropDownListFor(m => m.PeopleCount,
-                    new SelectList(Enumerable.Range(1, @Model.MaxPeople)), new { @class = "form-control" })
-                </dd>
+                <input asp-for="PeopleCount" class="form-control" />
             </div>
             <div class="form-group">
                 <dt>
                     <h1>Pasirinkti papildomą paslaugą(neprivaloma)</h1>
                 </dt>
             </div>
-            <div class="form-group">
+            <button
+				name="add"
+				value="1"
+				formnovalidate @*ASP.NET Core magic attribute to prevent client side validation when submit button is clicked*@
+				formaction="@Url.Action()#listEnd"
+				class="btn btn-info"
+				style="white-space: nowrap;"
+			>Pridėti</button>
+
+            <tbody>
+				@for( var i = 0; i < Model.Paslauga.Count; i++ ) {
+				<tr>
+					<td>
+						@* add hidden form fields for non-visible properties, otherwise they will get lost in code that handles button presses *@
+						@Html.HiddenFor(m => m.tempid)
+
+						@Html.DropDownListFor(
+							m => m.Paslauga[i].Id, (IEnumerable<SelectListItem>)ViewBag.Paslaugos,
+							new { @class = "form-control" }
+						)
+					</td>
+@*					<td>
+						<button
+							name="remove"
+							value="@Model.Paslauga[i]"
+							formnovalidate
+							formaction="@Url.Action()#listEnd"
+							class="btn btn-danger"
+							style="white-space: nowrap;"
+						><i class="fa-solid fa-trash"></i> Šalinti</button>
+					</td>*@
+				</tr>
+				}
+			</tbody>
+@*            <div class="form-group">
                 <div class="form-group">
                     <label class="control-label">Paslauga</label>
                     <dd class="col-sm-10">
@@ -96,7 +105,7 @@
                             (IEnumerable<SelectListItem>)ViewBag.Paslaugos, new { @id = "listbox" })
                     </dd>
                 </div>
-            </div>
+            </div>*@
             </br>
             @{
                 if (ViewBag.Erorras != null)

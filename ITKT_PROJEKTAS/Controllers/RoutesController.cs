@@ -13,6 +13,7 @@ using ITKT_PROJEKTAS.Entities;
 using System.Security.Claims;
 using System.Xml.Linq;
 using AutoMapper;
+using Microsoft.IdentityModel.Tokens;
 
 namespace ITKT_PROJEKTAS.Controllers
 {
@@ -96,7 +97,7 @@ namespace ITKT_PROJEKTAS.Controllers
 
         // GET: Routes/Details/5
         [Authorize(Roles = "User")]
-        public async Task<IActionResult> Details(int? id, int errr)
+        public async Task<IActionResult> Details(int? id, int? errr, int? add, RouteOrderDTO? dataEx)
         {
             if(errr == 1)
             {
@@ -110,6 +111,7 @@ namespace ITKT_PROJEKTAS.Controllers
             {
                 ViewBag.Erorras = "Pasirinktas skačius žmonių netelpa valtyse. Valtis yra sešiavietė.";
             }
+
 
             List<SelectListItem> paslaugos = new List<SelectListItem>();
             foreach (var pasl in _context.Paslauga)
@@ -146,7 +148,23 @@ namespace ITKT_PROJEKTAS.Controllers
 
             var routePictures = _context.Route.Include(r => r.Pictures).Where(z => z.Id == route.Id).Select(p => p.Pictures).FirstOrDefault();
             ViewBag.Pictures = routePictures.ToList();
-            
+
+            if(add != null)
+            {
+                if (dataEx.Paslauga.Count > 0)
+                    dataEx.Paslauga.Add(_context.Paslauga.Where(x => x.Id == dataEx.Paslauga.Last().Id).FirstOrDefault());
+                else
+                    dataEx.Paslauga.Add(_context.Paslauga.FirstOrDefault());
+                //ViewBag.Erorras negalima tu paciu paslaugu ar pan
+                //ModelState.Clear();
+                //keep values
+                int pc = dataEx.PeopleCount;
+                dataEx.PeopleCount = pc;
+                return View(dataEx);
+            }
+
+
+
             return View(routeOrderDTO);
         }
         // GET: Routes/DetailsUser/5
@@ -343,19 +361,19 @@ namespace ITKT_PROJEKTAS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> PassOrder(RouteOrderDTO order)
         {
-            if (!ModelState.IsValid)
-            {
-                return View("Details");
-            }
-            if (order.Boat == BoatType.Baidare && order.PeopleCount % 2 != 0)
+            //if (!ModelState.IsValid)
+            //{
+            //    return View("Details");
+            //}
+            if (order.Boat == BoatType.Baidare && (order.PeopleCount % 2 != 0 || order.PeopleCount <= 2) || order.PeopleCount > order.MaxPeople )
             {
                 return RedirectToAction("Details", new RouteValueDictionary(new { id = order.Passingid, errr = 1 }));
             }
-            else if(order.Boat == BoatType.Kanoja && order.PeopleCount % 4 != 0)
+            else if(order.Boat == BoatType.Kanoja && (order.PeopleCount % 4 != 0 || order.PeopleCount <= 4) || order.PeopleCount > order.MaxPeople)
             {
                 return RedirectToAction("Details", new RouteValueDictionary(new { id = order.Passingid, errr = 2 }));
             }
-            else if(order.Boat == BoatType.Valtis && order.PeopleCount % 6 != 0)
+            else if(order.Boat == BoatType.Valtis && (order.PeopleCount % 6 != 0 || order.PeopleCount <= 6) || order.PeopleCount > order.MaxPeople)
             {
                 return RedirectToAction("Details", new RouteValueDictionary(new { id = order.Passingid, errr = 3 }));
             }
