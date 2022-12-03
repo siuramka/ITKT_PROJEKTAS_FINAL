@@ -27,7 +27,9 @@ namespace ITKT_PROJEKTAS.Entities
         [DisplayName("Leistinas kiekis dalyvių")]
         [Range(0, int.MaxValue)]
         public int MaxPeople { get; set; }
+        public double Lattitude { get; set; }
+        public double Longtitude { get; set; }
         public Reservation? Reservation { get; set; }
-        public ICollection<Picture> Pictures { get; set; }
+        public ICollection<Picture>? Pictures { get; set; }
     }
 }

@@ -13,7 +13,6 @@ using ITKT_PROJEKTAS.Entities;
 using System.Security.Claims;
 using System.Xml.Linq;
 using AutoMapper;
-using Microsoft.IdentityModel.Tokens;
 
 namespace ITKT_PROJEKTAS.Controllers
 {
@@ -63,7 +62,7 @@ namespace ITKT_PROJEKTAS.Controllers
         [Authorize(Roles = "Manager")]
         public async Task<IActionResult> IndexAdmin(string sortOrder, bool Success)
         {
-            if(Success)
+            if (Success)
             {
                 ViewBag.Erorras = "Atlikta operacija sekmingai.";
             }
@@ -99,11 +98,11 @@ namespace ITKT_PROJEKTAS.Controllers
         [Authorize(Roles = "User")]
         public async Task<IActionResult> Details(int? id, int? errr, int? add, RouteOrderDTO? dataEx)
         {
-            if(errr == 1)
+            if (errr == 1)
             {
                 ViewBag.Erorras = "Pasirinktas skačius žmonių netelpa baidarėse. Baidarės yra dvi-vietės.";
             }
-            else if(errr ==2)
+            else if (errr == 2)
             {
                 ViewBag.Erorras = "Pasirinktas skaičius žmonių netelpa kanojose. Kanojos yra keturvietės.";
             }
@@ -111,7 +110,10 @@ namespace ITKT_PROJEKTAS.Controllers
             {
                 ViewBag.Erorras = "Pasirinktas skačius žmonių netelpa valtyse. Valtis yra sešiavietė.";
             }
-
+            else if (errr == 4)
+            {
+                ViewBag.Erorras = "Negalima pasirinkti tu paciu paslaugu.";
+            }
 
             List<SelectListItem> paslaugos = new List<SelectListItem>();
             foreach (var pasl in _context.Paslauga)
@@ -131,7 +133,7 @@ namespace ITKT_PROJEKTAS.Controllers
             var routeReservationExists = await _context.Reservation.Include(r => r.Route).AnyAsync(z => z.RouteId == id);
             //if (route == null || routeReservationExists)
             if (route == null)
-                {
+            {
                 return NotFound();
             }
             //:D
@@ -149,7 +151,7 @@ namespace ITKT_PROJEKTAS.Controllers
             var routePictures = _context.Route.Include(r => r.Pictures).Where(z => z.Id == route.Id).Select(p => p.Pictures).FirstOrDefault();
             ViewBag.Pictures = routePictures.ToList();
 
-            if(add != null)
+            if (add != null)
             {
                 if (dataEx.Paslauga.Count > 0)
                     dataEx.Paslauga.Add(_context.Paslauga.Where(x => x.Id == dataEx.Paslauga.Last().Id).FirstOrDefault());
@@ -171,7 +173,7 @@ namespace ITKT_PROJEKTAS.Controllers
         [Authorize(Roles = "User")]
         public async Task<IActionResult> DetailsUser(int? id, int err)
         {
-            if(err == 1)
+            if (err == 1)
             {
                 ViewBag.Erorras = "Nepasirinktas paveikslelis/blogas formatas";
             }
@@ -182,7 +184,7 @@ namespace ITKT_PROJEKTAS.Controllers
             var userIdstring = ((ClaimsIdentity)User.Identity).FindFirst(ClaimTypes.NameIdentifier).Value;
             int userId = int.Parse(userIdstring);
             var route = await _context.Route.FirstOrDefaultAsync(m => m.Id == id);
-            if(route != null&& User.IsInRole("Manager"))
+            if (route != null && User.IsInRole("Manager"))
             {
                 return View(route);
             }
@@ -191,8 +193,8 @@ namespace ITKT_PROJEKTAS.Controllers
             {
                 return NotFound();
             }
-           
-            
+
+
             return View(_mapper.Map<RouteImageDTO>(route));
         }
 
@@ -208,7 +210,7 @@ namespace ITKT_PROJEKTAS.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Date,Length,Difficulity,Description,PricePerPerson,MaxPeople")] Entities.Route route)
+        public async Task<IActionResult> Create([Bind("Id,Name,Date,Length,Difficulity,Description,PricePerPerson,MaxPeople,Lattitude,Longtitude")] Entities.Route route)
         {
             if (ModelState.IsValid)
             {
@@ -361,19 +363,21 @@ namespace ITKT_PROJEKTAS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> PassOrder(RouteOrderDTO order)
         {
-            //if (!ModelState.IsValid)
-            //{
-            //    return View("Details");
-            //}
-            if (order.Boat == BoatType.Baidare && (order.PeopleCount % 2 != 0 || order.PeopleCount <= 2) || order.PeopleCount > order.MaxPeople )
+            var paslaugoscheck = order.Paslauga;
+            var valid = paslaugoscheck.DistinctBy(x => x.Id).Count();
+            if(valid != paslaugoscheck.Count)
+            {
+                return RedirectToAction("Details", new RouteValueDictionary(new { id = order.Passingid, errr = 4 }));
+            }    
+            if (order.Boat == BoatType.Baidare && order.PeopleCount % 2 != 0)
             {
                 return RedirectToAction("Details", new RouteValueDictionary(new { id = order.Passingid, errr = 1 }));
             }
-            else if(order.Boat == BoatType.Kanoja && (order.PeopleCount % 4 != 0 || order.PeopleCount <= 4) || order.PeopleCount > order.MaxPeople)
+            else if(order.Boat == BoatType.Kanoja && order.PeopleCount % 4 != 0)
             {
                 return RedirectToAction("Details", new RouteValueDictionary(new { id = order.Passingid, errr = 2 }));
             }
-            else if(order.Boat == BoatType.Valtis && (order.PeopleCount % 6 != 0 || order.PeopleCount <= 6) || order.PeopleCount > order.MaxPeople)
+            else if(order.Boat == BoatType.Valtis && order.PeopleCount % 6 != 0)
             {
                 return RedirectToAction("Details", new RouteValueDictionary(new { id = order.Passingid, errr = 3 }));
             }
