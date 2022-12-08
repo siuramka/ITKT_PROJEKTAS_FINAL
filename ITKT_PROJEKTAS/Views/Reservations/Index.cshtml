@@ -24,12 +24,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.PersonCount)
             </th>
-@*            <th>
-                @Html.DisplayNameFor(model => model.Paslauga.Name)
+             <th>
+                Paslaugos
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Paslauga.Price)
-            </th>*@
         </tr>
     </thead>
     <tbody>
@@ -51,14 +48,14 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.PersonCount)
                 </td>
-@*                @{
-                    if (item.Paslauga != null)
+               
+                    @if (item.Paslauga.Count > 0)
                     {
                         <td>
-                            @Html.DisplayFor(modelItem => item.Paslauga.Name)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Paslauga.Price)
+                        @foreach (var aa in item.Paslauga)
+                        {
+                            <div>@aa.Name</div>
+                        }
                         </td>
                     }
                     else
@@ -66,11 +63,8 @@
                         <td>
                             -
                         </td>
-                        <td>
-                            -
-                        </td>
                     }
-                }*@
+                
             </tr>
         }
     </tbody>

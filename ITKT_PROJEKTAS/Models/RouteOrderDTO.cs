@@ -28,6 +28,5 @@ namespace ITKT_PROJEKTAS.Models
         public IList<Paslauga> Paslauga { get; set; } = new List<Paslauga>();
         public int? tempid { get; set; }
 
-
     }
 }

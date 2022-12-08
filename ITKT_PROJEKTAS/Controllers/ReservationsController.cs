@@ -78,7 +78,7 @@ namespace ITKT_PROJEKTAS.Controllers
             int userReservationCount = userReservations.Count();
 
             var userReservationSum = userReservations.Sum(x => x.Price);
-            //Paslauga paslaugaObj = _context.Paslauga.Where(r => r.Id == order.PaslaugaId).FirstOrDefault();
+
 
 
 
@@ -126,13 +126,13 @@ namespace ITKT_PROJEKTAS.Controllers
                 reservation.Price += reservation.ReservationCost;// Papildoma funkcija
             }
 
-            //if (paslaugaObj != null)
-            //{
-            //    reservation.Paslauga = paslaugaObj;
-            //    reservation.Price += paslaugaObj.Price;
-            //}
+            foreach(var paslauga in order.Paslauga)
+            {
+                Paslauga paslaugaObj = _context.Paslauga.Where(r => r.Id == paslauga.Id).FirstOrDefault();
+                reservation.Paslauga.Add(paslaugaObj);
+                reservation.Price += paslaugaObj.Price;
+            }
 
-            //Move this into business layer later lol........
             //Nuolaidų sistema pagal vartotojo užsakymo sumą
             //(nuo 200 lt – 3 %, 250 lt – 5 %, 400 lt – 10 %).
             //Jei bendroje sumoje(per kelis kartus) vartotojas yra užsakęs paslaugų daugiau
@@ -141,7 +141,6 @@ namespace ITKT_PROJEKTAS.Controllers
             reservation.Discount = Math.Round(reservation.Discount,2);
             reservation.Price = Math.Round(reservation.Price,2);
             reservation.ReservationCost = Math.Round(reservation.ReservationCost,2);
-
             _context.Reservation.Add(reservation);
             _context.SaveChanges();
             return View(reservation);

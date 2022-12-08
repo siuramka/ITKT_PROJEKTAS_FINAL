@@ -63,19 +63,25 @@
             </div>
         </div>
     }
-}  
-    <div class="row">
-        <div class="col-md-4">
-            <form asp-action="DetailsUser" enctype="multipart/form-data">
-                <div class="form-group">
-                    <label asp-for="Picture" class="control-label"></label>
-                    <input asp-for="Picture" accept="image/*" />
-                    <span asp-validation-for="Picture" class="text-danger"></span>
+}
+
+    @if (ViewBag.ShowUpload == true)
+    {
+        <div class="row">
+                <div class="col-md-4">
+                    <form asp-action="DetailsUser" enctype="multipart/form-data">
+                        <div class="form-group">
+                            <label class="control-label">Ikelti nuotrauka</label>
+                            <input asp-for="Picture" accept="image/*" />
+                            <span asp-validation-for="Picture" class="text-danger"></span>
+                        </div>
+                        <div class="form-group" style="margin-top:10px">
+                            <input type="submit" value="Ikelti " class="btn btn-primary" />
+                        </div>
+                    </form>
                 </div>
-                <div class="form-group" style="margin-top:10px">
-                    <input type="submit" value="Ikelti" class="btn btn-primary" />
-                </div>
-            </form>
-        </div>
-    </div>
+            </div>              
+    }
+        
+
 </div>

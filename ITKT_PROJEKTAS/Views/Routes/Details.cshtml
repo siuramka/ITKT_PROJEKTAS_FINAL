@@ -11,9 +11,9 @@
         <form asp-action="PassOrder">
             <input type="hidden" asp-for="Passingid" />
             <input type="hidden" asp-for="Description" />
+            <input type="hidden" asp-for="Name" />
             <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" readonly />
+                <h1>@Model.Name</h1>
             </div>
             <div class="form-group">
                 <label asp-for="Date" class="control-label"></label>
@@ -42,7 +42,11 @@
                     </dd>
                 </div>
             </div>
-            <div class="form-group">
+
+            @{
+                if(ViewBag.Taken == false)
+                {
+                                <div class="form-group">
                 <dt>
                     <h1>Pasirinkti duomenis:</h1>
                 </dt>
@@ -97,17 +101,8 @@
 				</tr>
 				}
 			</tbody>
-@*            <div class="form-group">
-                <div class="form-group">
-                    <label class="control-label">Paslauga</label>
-                    <dd class="col-sm-10">
-                            @Html.ListBoxFor(model => model.PaslaugaIds,
-                            (IEnumerable<SelectListItem>)ViewBag.Paslaugos, new { @id = "listbox" })
-                    </dd>
-                </div>
-            </div>*@
-            </br>
-            @{
+            <br>
+            
                 if (ViewBag.Erorras != null)
                 {
                     <div class="form-group">
@@ -116,10 +111,13 @@
                         </div>
                     </div>
                 }
-            }
+            
             <div class="form-group">
                 <input type="submit" value="Rezervuoti" class="btn btn-primary" />
             </div>
+                }
+            }
+
         </form>
     </div>
        <div class="col-md-4">
@@ -130,7 +128,13 @@
 
 </div>
        <div class="col">
-        <h1>Dalyviu nuotraukos</h1>
+    @{
+        if(ViewBag.Pictures.Count > 0)
+        {
+            <h1>Dalyviu nuotraukos</h1>
+        }
+    }
+        
             <div class="container">
                 <div class="row">
             @for (int i = 0; i < ViewBag.Pictures.Count; i++)

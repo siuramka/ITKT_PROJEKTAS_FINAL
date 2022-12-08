@@ -1,0 +1,65 @@
+﻿@model ITKT_PROJEKTAS.Entities.Reservation
+
+@{
+    ViewData["Title"] = "Rezervacija";
+}
+
+<h1>Atlikta rezervacija</h1>
+
+<div>
+    <h4>Informacija</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Route)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Route.Name)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Boat)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Boat)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Price)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Price)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Discount)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Discount)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.ReservationCost)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.ReservationCost)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.PersonCount)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.PersonCount)
+        </dd>
+        @{
+            if(Model.Paslauga.ToList().Count > 0)
+            {
+                <h2>Uzsakytos paslaugos</h2>
+                @foreach (var item in Model.Paslauga)
+                {
+                    <div>@item.Name</div>
+                    <div>@item.Price eur.</div>
+                }
+            }
+        }
+
+    </dl>
+</div>
+<div>
+    <a asp-action="Index">Atgal</a>
+</div>
