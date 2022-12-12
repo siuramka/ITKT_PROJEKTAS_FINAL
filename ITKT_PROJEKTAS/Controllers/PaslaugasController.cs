@@ -21,7 +21,10 @@ namespace ITKT_PROJEKTAS.Controllers
         {
             _context = context;
         }
-
+        public IActionResult NotFound()
+        {
+            return View("NotFound");
+        }
         // GET: Paslaugas
         public async Task<IActionResult> Index(bool Success)
         {

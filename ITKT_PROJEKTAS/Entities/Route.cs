@@ -27,7 +27,9 @@ namespace ITKT_PROJEKTAS.Entities
         [DisplayName("Leistinas kiekis dalyvių")]
         [Range(0, int.MaxValue)]
         public int MaxPeople { get; set; }
+        [DisplayName("Platumos kord.")]
         public double Lattitude { get; set; }
+        [DisplayName("Ilgumos kord.")]
         public double Longtitude { get; set; }
         public Reservation? Reservation { get; set; }
         public ICollection<Picture>? Pictures { get; set; }

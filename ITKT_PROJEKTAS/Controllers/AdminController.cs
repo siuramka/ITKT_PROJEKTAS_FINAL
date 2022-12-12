@@ -14,6 +14,10 @@ namespace ITKT_PROJEKTAS.Controllers
         {
             _context = context;
         }
+        public IActionResult NotFound()
+        {
+            return View("NotFound");
+        }
         // GET: Users
         public async Task<IActionResult> Index()
         {

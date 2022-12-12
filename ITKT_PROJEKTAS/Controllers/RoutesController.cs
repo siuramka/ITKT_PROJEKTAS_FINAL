@@ -26,7 +26,10 @@ namespace ITKT_PROJEKTAS.Controllers
             _context = context;
             _mapper = mapper;
         }
-
+        public IActionResult NotFound()
+        {
+            return View("NotFound");
+        }
         // GET: Routes
         [Authorize(Roles = "User")]
         public async Task<IActionResult> Index(string sortOrder)
@@ -98,6 +101,7 @@ namespace ITKT_PROJEKTAS.Controllers
         [Authorize(Roles = "User")]
         public async Task<IActionResult> Details(int? id, int? errr, int? add, RouteOrderDTO? dataEx)
         {
+            ViewBag.Erorras = null;
             if (errr == 1)
             {
                 ViewBag.Erorras = "Pasirinktas skačius žmonių netelpa baidarėse. Baidarės yra dvi-vietės.";
@@ -114,7 +118,10 @@ namespace ITKT_PROJEKTAS.Controllers
             {
                 ViewBag.Erorras = "Negalima pasirinkti tu paciu paslaugu.";
             }
-
+            else if (errr == 12)
+            {
+                ViewBag.Erorras = "Pasirinktas skaicius zmoniu yra negalimas.";
+            }
             List<SelectListItem> paslaugos = new List<SelectListItem>();
             foreach (var pasl in _context.Paslauga)
             {
@@ -166,7 +173,7 @@ namespace ITKT_PROJEKTAS.Controllers
                 else
                     dataEx.Paslauga.Add(_context.Paslauga.FirstOrDefault());
                 //ViewBag.Erorras negalima tu paciu paslaugu ar pan
-                //ModelState.Clear();
+                ModelState.Clear();
                 //keep values
                 int pc = dataEx.PeopleCount;
                 Difficulity dif = dataEx.Difficulity;
@@ -189,6 +196,10 @@ namespace ITKT_PROJEKTAS.Controllers
             {
                 ViewBag.Erorras = "Nepasirinktas paveikslelis/blogas formatas";
             }
+            if (err == 12)
+            {
+                ViewBag.Erorras = "Įkelta nuotrauka";
+            }
             if (id == null || _context.Route == null)
             {
                 return NotFound();
@@ -196,6 +207,10 @@ namespace ITKT_PROJEKTAS.Controllers
             var userIdstring = ((ClaimsIdentity)User.Identity).FindFirst(ClaimTypes.NameIdentifier).Value;
             int userId = int.Parse(userIdstring);
             var route = await _context.Route.FirstOrDefaultAsync(m => m.Id == id);
+            if (route is null)
+            {
+                return NotFound();
+            }
             var showUpload = DateTime.Compare(route.Date, DateTime.Today) < 0;
             if (showUpload == true)
             {
@@ -205,6 +220,7 @@ namespace ITKT_PROJEKTAS.Controllers
             {
                 ViewBag.ShowUpload = false;
             }
+
             if (route != null && User.IsInRole("Manager"))
             {
                 return View(route);
@@ -218,6 +234,7 @@ namespace ITKT_PROJEKTAS.Controllers
 
             return View(_mapper.Map<RouteImageDTO>(route));
         }
+
 
         // GET: Routes/Create
         [Authorize(Roles = "Manager")]
@@ -386,20 +403,23 @@ namespace ITKT_PROJEKTAS.Controllers
         {
             var paslaugoscheck = order.Paslauga;
             var valid = paslaugoscheck.DistinctBy(x => x.Id).Count();
-            bool validTooMany = order.PeopleCount <= order.MaxPeople;
             if(valid != paslaugoscheck.Count)
             {
                 return RedirectToAction("Details", new RouteValueDictionary(new { id = order.Passingid, errr = 4 }));
-            }    
-            if (order.Boat == BoatType.Baidare && order.PeopleCount % 2 != 0 || !validTooMany)
+            }
+            if (order.PeopleCount < 1 || (order.PeopleCount > order.MaxPeople))
+            {
+                return RedirectToAction("Details", new RouteValueDictionary(new { id = order.Passingid, errr = 12 }));
+            }
+            if (order.Boat == BoatType.Baidares && order.PeopleCount % 2 != 0 || (order.Boat == BoatType.Baidares && order.PeopleCount > order.MaxPeople))
             {
                 return RedirectToAction("Details", new RouteValueDictionary(new { id = order.Passingid, errr = 1 }));
             }
-            else if(order.Boat == BoatType.Kanoja && order.PeopleCount % 4 != 0 || !validTooMany)
+            else if(order.Boat == BoatType.Kanojos && order.PeopleCount % 4 != 0 || (order.Boat == BoatType.Kanojos && order.PeopleCount > order.MaxPeople))
             {
                 return RedirectToAction("Details", new RouteValueDictionary(new { id = order.Passingid, errr = 2 }));
             }
-            else if(order.Boat == BoatType.Valtis && order.PeopleCount % 6 != 0 || !validTooMany)
+            else if(order.Boat == BoatType.Valtys && order.PeopleCount % 6 != 0 || (order.Boat == BoatType.Valtys && order.PeopleCount > order.MaxPeople))
             {
                 return RedirectToAction("Details", new RouteValueDictionary(new { id = order.Passingid, errr = 3 }));
             }
@@ -505,9 +525,17 @@ namespace ITKT_PROJEKTAS.Controllers
                 }));
             }
             var Name = userViewModel.Picture.Name;
+            
             var PictureFormat = userViewModel.Picture.ContentType;
-
-
+  
+            if(!PictureFormat.Contains("image"))
+            {
+                return RedirectToAction(nameof(DetailsUser), new RouteValueDictionary(new
+                {
+                    Id = userViewModel.Id,
+                    err = 1
+                }));
+            }
             var memoryStream = new MemoryStream();
             userViewModel.Picture.CopyTo(memoryStream);
             var userPicture = memoryStream.ToArray();
@@ -524,7 +552,11 @@ namespace ITKT_PROJEKTAS.Controllers
                     routes.Pictures.Add(picturez);
             }
             _context.SaveChanges();
-            return RedirectToAction("Index");
+            return RedirectToAction(nameof(DetailsUser), new RouteValueDictionary(new
+            {
+                Id = userViewModel.Id,
+                err = 12
+            }));
         }
         private bool RouteExists(int id)
         {

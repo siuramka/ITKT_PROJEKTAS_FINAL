@@ -17,7 +17,10 @@ namespace ITKT_PROJEKTAS.Controllers
             _userManager = userManager;
             _userRepository = userRepository;
         }
-
+        public IActionResult NotFound()
+        {
+            return View("NotFound");
+        }
         public IActionResult Login()
         {
             return View();

@@ -2,8 +2,8 @@
 {
     public enum BoatType
     {
-        Kanoja,
-        Baidare,
-        Valtis
+        Kanojos = 0,
+        Baidares = 1,
+        Valtys = 2
     }
 }

@@ -59,6 +59,10 @@ namespace ITKT_PROJEKTAS.Controllers
         {
             return View();
         }
+        public IActionResult NotFound()
+        {
+            return View("NotFound");
+        }
 
         // POST: Users/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.

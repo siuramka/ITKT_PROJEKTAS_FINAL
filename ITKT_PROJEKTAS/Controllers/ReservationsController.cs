@@ -27,6 +27,10 @@ namespace ITKT_PROJEKTAS.Controllers
             _mapper = mapper;
 
         }
+        public IActionResult NotFound()
+        {
+            return View("NotFound");
+        }
 
         // GET: Reservations
         [Authorize(Roles = "User")]

@@ -10,5 +10,9 @@ namespace ITKT_PROJEKTAS.Controllers
         {
             return View();
         }
+        public IActionResult NotFound()
+        {
+            return View("NotFound");
+        }
     }
 }
