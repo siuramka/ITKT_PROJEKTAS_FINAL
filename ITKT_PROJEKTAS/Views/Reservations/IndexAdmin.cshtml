@@ -61,21 +61,27 @@
             <td>
                 @Html.DisplayFor(modelItem => item.User.Id)
             </td>
-                @if (item.Paslauga.Count > 0)
+            <td>
+            @if(item.Paslauga != null)
                 {
-                    <td>
-                        @foreach (var aa in item.Paslauga)
-                        {
-                            <div>@aa.Name</div>
-                        }
-                    </td>
+                    @if (item.Paslauga.Count > 0)
+                    {
+                        <td>
+                            @foreach (var aa in item.Paslauga)
+                            {
+                                <div>@aa.Name</div>
+                            }
+                        </td>
+                    }
+                    else
+                    {
+                        <td>
+                            -
+                        </td>
+                    }
+                    
                 }
-                else
-                {
-                    <td>
-                        -
-                    </td>
-                }
+            </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Redaguoti</a> |
                 <a asp-action="Delete" asp-route-id="@item.Id">Ištrinti</a>

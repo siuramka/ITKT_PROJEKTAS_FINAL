@@ -47,7 +47,7 @@ namespace ITKT_PROJEKTAS.Controllers
             {
                 ViewBag.Erorras = "Operacija atlikta sekmingai";
             }
-            return View(_context.Reservation.Include(r => r.Route).Include(r => r.User));
+            return View(_context.Reservation.Include(r => r.Route).Include(p => p.Paslauga).Include(r => r.User));
         }
 
         // GET: Reservations/Details/5

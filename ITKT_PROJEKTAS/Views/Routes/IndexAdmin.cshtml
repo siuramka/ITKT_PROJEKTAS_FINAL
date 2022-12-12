@@ -35,7 +35,7 @@
                 @Html.DisplayNameFor(model => model.Difficulity)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Description)
+                Aprasymas
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.PricePerPerson)
@@ -61,9 +61,20 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Difficulity)
             </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
+                @{
+                    string vv = item.Description;
+                    int zie = vv.Length;
+                    if (vv.Length > 50)
+                    {
+                        zie = 50;
+                    }
+                    string lastas = vv.Substring(0, zie - 1);
+                    lastas += "...";
+                    string pen = "";
+                    <td>@lastas</td>
+                    }
+                @*@Html.DisplayFor(modelItem => item.Description)*@
+         
             <td>
                 @Html.DisplayFor(modelItem => item.PricePerPerson)
             </td>
