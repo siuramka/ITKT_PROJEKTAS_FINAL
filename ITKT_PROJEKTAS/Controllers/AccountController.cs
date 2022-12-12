@@ -76,7 +76,7 @@ namespace ITKT_PROJEKTAS.Controllers
             }
             await _userManager.SignIn(this.HttpContext, user, false);
 
-            return LocalRedirect("~/Account/Profile");
+            return LocalRedirect("~/Home/Index");
         }
 
         [Authorize]
